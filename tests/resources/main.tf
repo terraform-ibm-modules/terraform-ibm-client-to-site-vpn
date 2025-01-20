@@ -67,3 +67,7 @@ module "secrets_manager_private_certificate" {
     ibm = ibm.ibm-sm
   }
 }
+
+data "ibm_is_security_group" "vpc_sg" {
+  name = [for sg in jsondecode(module.landing_zone.config).security_groups : sg.name][0]
+}

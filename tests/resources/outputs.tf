@@ -26,3 +26,8 @@ output "sm_private_cert_crn" {
   value       = var.existing_secrets_manager_instance_crn != null ? module.secrets_manager_private_certificate[0].secret_crn : null
   description = "CRN of secrets manager private certificate"
 }
+
+output "vpc_security_group" {
+  value       = [data.ibm_is_security_group.vpc_sg.id]
+  description = "VPC's security group"
+}
