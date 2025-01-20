@@ -27,7 +27,7 @@ output "sm_private_cert_crn" {
   description = "CRN of secrets manager private certificate"
 }
 
-output "vpc_security_group" {
-  value       = [data.ibm_is_security_group.vpc_sg.id]
-  description = "VPC's security group"
+output "vpc_security_group_id" {
+  value       = data.ibm_is_security_group.vpc_sg.id
+  description = "VPC's security group id"
 }
