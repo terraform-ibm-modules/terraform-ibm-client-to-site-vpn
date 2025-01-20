@@ -69,5 +69,6 @@ module "secrets_manager_private_certificate" {
 }
 
 data "ibm_is_security_group" "vpc_sg" {
-  name = [for sg in jsondecode(module.landing_zone.config).security_groups : sg.name][0]
+  name = "management-vpe-sg"
+  vpc  = [for vpc in module.landing_zone.vpc_data : vpc if vpc.vpc_name == "${module.landing_zone.prefix}-management-vpc"][0].vpc_id
 }
