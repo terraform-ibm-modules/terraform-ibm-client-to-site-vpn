@@ -378,9 +378,15 @@ module "client_to_site_sg" {
   security_group_rules         = local.security_group_rule
 }
 
+locals {
+  security_groups = length([module.vpn.vpn_server_id]) < 0 ? [] : (var.add_security_group == true ? [module.client_to_site_sg[0].security_group_id] : (length(var.existing_security_group_ids) > 0 ? var.existing_security_group_ids : []))
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_vars = length(var.existing_security_group_ids) > 0 && var.add_security_group == true ? tobool("When 'existing_security_group_ids' input variable is set, then 'add_security_group' input variable should be set to false.") : true
+}
+
 # we add security group target after VPN and client_to_site_sg are created. Otherwise cycle dependency error is thrown
 resource "ibm_is_security_group_target" "sg_target" {
-  count          = var.add_security_group && length([module.vpn.vpn_server_id]) > 0 ? 1 : 0
-  security_group = module.client_to_site_sg[0].security_group_id
-  target         = local.target_ids[count.index]
+  for_each       = { for i, val in local.security_groups : i => val }
+  security_group = each.value
+  target         = local.target_ids[0]
 }

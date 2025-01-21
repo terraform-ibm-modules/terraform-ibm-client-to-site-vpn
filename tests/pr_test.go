@@ -307,6 +307,7 @@ func TestStandardSolutionExistingResources(t *testing.T) {
 				"existing_secrets_manager_cert_crn":     terraform.Output(t, existingTerraformOptions, "sm_private_cert_crn"),
 				"existing_security_group_ids":           []string{terraform.Output(t, existingTerraformOptions, "vpc_security_group_id")},
 				"existing_secrets_manager_instance_crn": permanentResources["secretsManagerCRN"],
+				"add_security_group":                    false,
 				"provider_visibility":                   "public",
 				"vpn_server_routes":                     []string{"0.0.0.0/0"},
 				"remote_cidr":                           "10.10.120.0/24",
