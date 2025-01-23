@@ -9,7 +9,7 @@ module "resource_group" {
 }
 
 ########################################################################################################################
-# Secrets Manager resources
+# Secrets Manager resourcess
 ########################################################################################################################
 locals {
   secrets_manager_cert_crn        = module.secrets_manager_private_certificate.secret_crn
