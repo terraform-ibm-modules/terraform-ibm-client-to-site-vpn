@@ -166,7 +166,7 @@ variable "vpn_client_access_acl_ids" {
 }
 
 variable "existing_security_group_ids" {
-  description = "The existing security groups ID to use for this VPN server. If unspecified, the VPC's default security group is used"
+  description = "The existing security groups ID to use for this VPN server. If unspecified, the VPC's default security group is used. To use existing security groups, the 'add_security_group' input variable mmust be false"
   type        = list(string)
   default     = []
   nullable    = false

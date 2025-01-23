@@ -274,6 +274,7 @@ resource "ibm_is_subnet" "client_to_site_subnet_zone_1" {
   ipv4_cidr_block = var.vpn_subnet_cidr_zone_1
   zone            = local.zone_1
   network_acl     = ibm_is_network_acl.client_to_site_vpn_acl[keys(local.acl_object)[0]].id
+  resource_group  = module.resource_group.resource_group_id
 }
 
 resource "ibm_is_subnet" "client_to_site_subnet_zone_2" {
@@ -284,6 +285,7 @@ resource "ibm_is_subnet" "client_to_site_subnet_zone_2" {
   ipv4_cidr_block = var.vpn_subnet_cidr_zone_2
   zone            = local.zone_2
   network_acl     = ibm_is_network_acl.client_to_site_vpn_acl[keys(local.acl_object)[0]].id
+  resource_group  = module.resource_group.resource_group_id
 }
 
 ##############################################################################
@@ -379,14 +381,13 @@ module "client_to_site_sg" {
 }
 
 locals {
-  security_groups = length([module.vpn.vpn_server_id]) < 0 ? [] : (var.add_security_group == true ? [module.client_to_site_sg[0].security_group_id] : (length(var.existing_security_group_ids) > 0 ? var.existing_security_group_ids : []))
   # tflint-ignore: terraform_unused_declarations
   validate_kms_vars = length(var.existing_security_group_ids) > 0 && var.add_security_group == true ? tobool("When 'existing_security_group_ids' input variable is set, then 'add_security_group' input variable should be set to false.") : true
 }
 
 # we add security group target after VPN and client_to_site_sg are created. Otherwise cycle dependency error is thrown
 resource "ibm_is_security_group_target" "sg_target" {
-  for_each       = { for i, val in local.security_groups : i => val }
-  security_group = each.value
-  target         = local.target_ids[0]
+  count          = var.add_security_group && length([module.vpn.vpn_server_id]) > 0 ? 1 : 0
+  security_group = module.client_to_site_sg[0].security_group_id
+  target         = local.target_ids[count.index]
 }
