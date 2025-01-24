@@ -382,7 +382,7 @@ module "client_to_site_sg" {
 
 locals {
   # tflint-ignore: terraform_unused_declarations
-  validate_kms_vars = length(var.existing_security_group_ids) > 0 && var.add_security_group == true ? tobool("When 'existing_security_group_ids' input variable is set, then 'add_security_group' input variable should be set to false.") : true
+  validate_kms_vars = var.existing_security_group_ids != null && var.add_security_group == true ? tobool("When 'existing_security_group_ids' input variable is set, then 'add_security_group' input variable should be set to false.") : true
 }
 
 # we add security group target after VPN and client_to_site_sg are created. Otherwise cycle dependency error is thrown
