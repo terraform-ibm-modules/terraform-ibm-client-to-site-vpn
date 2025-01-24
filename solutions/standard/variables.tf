@@ -6,7 +6,7 @@ variable "ibmcloud_api_key" {
 
 variable "prefix" {
   type        = string
-  description = "Optional. The prefix to append to all resources that this solution creates. Must begin with a letter and contain only lowercase letters, numbers, and - characters. Prefix is ignored if it is `null` or empty string (\"\")."
+  description = "Optional. The prefix to add to all resources that this solution creates. Must begin with a letter and contain only lowercase letters, numbers, and - characters. To not use any prefix value, you can set this value to `null` or an empty string."
   default     = "standard"
 
   validation {
