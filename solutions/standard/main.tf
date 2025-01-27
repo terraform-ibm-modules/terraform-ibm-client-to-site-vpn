@@ -274,6 +274,7 @@ resource "ibm_is_subnet" "client_to_site_subnet_zone_1" {
   ipv4_cidr_block = var.vpn_subnet_cidr_zone_1
   zone            = local.zone_1
   network_acl     = ibm_is_network_acl.client_to_site_vpn_acl[keys(local.acl_object)[0]].id
+  resource_group  = module.resource_group.resource_group_id
 }
 
 resource "ibm_is_subnet" "client_to_site_subnet_zone_2" {
@@ -284,6 +285,7 @@ resource "ibm_is_subnet" "client_to_site_subnet_zone_2" {
   ipv4_cidr_block = var.vpn_subnet_cidr_zone_2
   zone            = local.zone_2
   network_acl     = ibm_is_network_acl.client_to_site_vpn_acl[keys(local.acl_object)[0]].id
+  resource_group  = module.resource_group.resource_group_id
 }
 
 ##############################################################################
@@ -356,6 +358,7 @@ module "vpn" {
   access_group_name             = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.access_group_name}" : var.access_group_name
   secrets_manager_id            = module.existing_sm_crn_parser.service_instance
   vpn_server_routes             = local.vpn_server_routes
+  existing_security_group_ids   = var.existing_security_group_ids
 }
 
 # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/issues/45
@@ -375,6 +378,11 @@ module "client_to_site_sg" {
   resource_group               = module.resource_group.resource_group_id
   security_group_name          = (var.prefix != null && var.prefix != "") ? "${var.prefix}-client-to-site-sg" : "client-to-site-sg"
   security_group_rules         = local.security_group_rule
+}
+
+locals {
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_vars = length(var.existing_security_group_ids) > 0 && var.add_security_group == true ? tobool("When 'existing_security_group_ids' input variable is set, then 'add_security_group' input variable should be set to false.") : true
 }
 
 # we add security group target after VPN and client_to_site_sg are created. Otherwise cycle dependency error is thrown

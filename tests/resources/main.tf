@@ -67,3 +67,8 @@ module "secrets_manager_private_certificate" {
     ibm = ibm.ibm-sm
   }
 }
+
+data "ibm_is_security_group" "vpc_sg" {
+  name = "management-vpe-sg"
+  vpc  = [for vpc in module.landing_zone.vpc_data : vpc if vpc.vpc_name == "${module.landing_zone.prefix}-management-vpc"][0].vpc_id
+}
