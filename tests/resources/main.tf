@@ -4,7 +4,7 @@
 
 module "landing_zone" {
   source                 = "terraform-ibm-modules/landing-zone/ibm//patterns//vpc//module"
-  version                = "6.2.2"
+  version                = "7.0.1"
   region                 = var.region
   prefix                 = var.prefix
   tags                   = var.resource_tags
