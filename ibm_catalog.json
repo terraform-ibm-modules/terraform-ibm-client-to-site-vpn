@@ -119,22 +119,7 @@
               "key": "vpn_name"
             },
             {
-              "custom_config": {
-                "config_constraints": {
-                  "generationType": "2"
-                },
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "type": "vpc_region"
-              },
-              "key": "region",
-              "required": true
-            },
-            {
               "key": "existing_secrets_manager_instance_crn"
-            },
-            {
-              "key": "existing_secrets_manager_cert_crn"
             },
             {
               "key": "cert_common_name"
@@ -246,7 +231,7 @@
             },
             {
               "flavors": [
-                  "standard"
+                "standard"
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
@@ -289,18 +274,6 @@
             },
             {
               "key": "vpn_name"
-            },
-            {
-              "custom_config": {
-                "config_constraints": {
-                  "generationType": "2"
-                },
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "type": "vpc_region"
-              },
-              "key": "region",
-              "required": true
             },
             {
               "key": "existing_secrets_manager_instance_crn"
@@ -349,6 +322,18 @@
             },
             {
               "key": "vpn_client_access_acl_ids"
+            },
+            {
+              "key": "add_security_group"
+            },
+            {
+              "key": "existing_secrets_manager_secret_group_id"
+            },
+            {
+              "key": "existing_security_group_ids"
+            },
+            {
+              "key": "existing_subnet_ids"
             }
           ],
           "iam_permissions": [
