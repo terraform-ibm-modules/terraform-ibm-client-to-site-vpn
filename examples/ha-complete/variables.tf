@@ -105,5 +105,5 @@ variable "root_ca_max_ttl" {
 variable "root_ca_common_name" {
   type        = string
   description = "Fully qualified domain name or host domain name for the certificate to be created"
-  default     = "cloud.ibm.com"
+  default     = "*.cloud.ibm.com"
 }
