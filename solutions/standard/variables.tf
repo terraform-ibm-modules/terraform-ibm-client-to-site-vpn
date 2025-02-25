@@ -184,6 +184,18 @@ variable "vpn_route_action" {
   default     = "deliver"
 }
 
+variable "client_idle_timeout" {
+  type        = number
+  description = "The seconds a VPN client can be idle before this VPN server will disconnect it. Default set to 30m (1800 secs). Specify 0 to prevent the server from disconnecting idle clients."
+  default     = 1800
+}
+
+variable "enable_split_tunneling" {
+  type        = bool
+  description = "Enables split tunnel mode for the Client to Site VPN server"
+  default     = true
+}
+
 ##############################################################################
 # Provider
 ##############################################################################

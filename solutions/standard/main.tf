@@ -392,6 +392,8 @@ module "vpn" {
   existing_security_group_ids   = var.existing_security_group_ids
   client_ip_pool                = var.client_ip_pool
   client_dns_server_ips         = var.client_dns_server_ips
+  client_idle_timeout           = var.client_idle_timeout
+  enable_split_tunneling        = var.enable_split_tunneling
 }
 
 # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/issues/45

@@ -330,6 +330,12 @@
               "key": "vpn_client_access_acl_ids"
             },
             {
+              "key": "client_idle_timeout"
+            },
+            {
+              "key": "enable_split_tunneling"
+            },
+            {
               "key": "add_security_group"
             },
             {
