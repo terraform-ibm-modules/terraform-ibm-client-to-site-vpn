@@ -176,7 +176,7 @@ locals {
     }
   ]
   acl_object = length(var.existing_subnet_ids) <= 0 ? {
-    var.prefix != null && var.prefix != "" ? "${var.prefix}-vpn-network-acl" : "vpn-network-acl" = {
+    var.prefix != null && var.prefix != "" ? "${var.prefix}-vpn-acl" : "vpn-acl" = {
       rules = concat(local.acl_inbound_rules_tcp, local.acl_inbound_rules_udp_443, local.acl_inbound_rules_udp_53, local.acl_outbound_rules_tcp, local.acl_outbound_rules_udp_443, local.acl_outbound_rules_udp_53, local.deny_all_rules),
     }
   } : {}
