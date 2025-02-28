@@ -75,8 +75,8 @@ locals {
   zone_1          = var.vpn_zone_1 != null ? var.vpn_zone_1 : "${local.vpc_region}-1" # hardcode to first zone in region
   zone_2          = var.vpn_zone_2 != null ? var.vpn_zone_2 : "${local.vpc_region}-2" # hardcode to second zone in region
   target_ids      = [module.vpn.vpn_server_id]
-
-  subnet_cidrs = compact([var.vpn_subnet_cidr_zone_1, var.vpn_subnet_cidr_zone_2, var.client_ip_pool])
+  # if translate mode is used for routes, then we do not need to have the client IP pool range in the rules
+  subnet_cidrs = var.vpn_route_action == "translate" ? compact([var.vpn_subnet_cidr_zone_1, var.vpn_subnet_cidr_zone_2]) : compact([var.vpn_subnet_cidr_zone_1, var.vpn_subnet_cidr_zone_2, var.client_ip_pool])
 
   ##############################################################################
   # ACL rules
@@ -114,16 +114,16 @@ locals {
     }
   ]
   acl_outbound_rules_udp_53 = [
-    for i, subnet_cidr in var.client_dns_server_ips :
+    for i, client_dns_server_ip in var.client_dns_server_ips :
     {
       name        = "outbound-udp-53-${i}"
       action      = "allow"
-      source      = subnet_cidr
+      source      = client_dns_server_ip
       destination = var.remote_cidr
       direction   = "outbound"
       udp = {
-        source_port_min = 53
-        source_port_max = 53
+        port_min = 53
+        port_max = 53
       }
       tcp = null
     }
@@ -161,16 +161,16 @@ locals {
     }
   ]
   acl_inbound_rules_udp_53 = [
-    for i, subnet_cidr in var.client_dns_server_ips :
+    for i, client_dns_server_ip in var.client_dns_server_ips :
     {
       name        = "inbound-udp-53-${i}"
       action      = "allow"
       source      = var.remote_cidr
-      destination = subnet_cidr
+      destination = client_dns_server_ip
       direction   = "inbound"
       udp = {
-        port_min = 53
-        port_max = 53
+        source_port_min = 53
+        source_port_max = 53
       }
       tcp = null
     }

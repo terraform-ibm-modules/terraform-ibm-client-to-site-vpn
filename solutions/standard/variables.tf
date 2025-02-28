@@ -182,6 +182,7 @@ variable "vpn_route_action" {
   type        = string
   description = "The action to perform with a packet matching the VPN route. The same action will be applied to all routes."
   default     = "deliver"
+  nullable    = false
 }
 
 variable "client_idle_timeout" {
