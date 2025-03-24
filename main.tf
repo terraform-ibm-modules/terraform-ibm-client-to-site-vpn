@@ -2,11 +2,6 @@ locals {
   # There is a provider bug generating "module-metadata.json" where variable value is not access directly.
   # https://github.com/IBM-Cloud/terraform-config-inspect/issues/19
   subnet_ids = var.subnet_ids
-
-  secrets_manager_validate_condition = (var.create_s2s_auth_policy == true && var.secrets_manager_id == null)
-  secrets_manager_validate_msg       = "Value for 'secrets_manager_id' must not be null if 'create_s2s_auth_policy' is true"
-  # tflint-ignore: terraform_unused_declarations
-  secrets_manager_validate_check = regex("^${local.secrets_manager_validate_msg}$", (!local.secrets_manager_validate_condition ? local.secrets_manager_validate_msg : ""))
 }
 
 # IAM Service to Service Authorization

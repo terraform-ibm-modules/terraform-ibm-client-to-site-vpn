@@ -104,6 +104,11 @@ variable "secrets_manager_id" {
   type        = string
   description = "ID of the Secrets Manager that contains the certificate to use for the VPN, only required when create_s2s_auth_policy is true."
   default     = null
+
+  validation {
+    condition     = !(var.create_s2s_auth_policy == true && var.secrets_manager_id == null)
+    error_message = "Value for 'secrets_manager_id' must not be null if 'create_s2s_auth_policy' is true"
+  }
 }
 
 ##############################################################################
