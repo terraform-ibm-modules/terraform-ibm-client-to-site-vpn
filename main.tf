@@ -9,14 +9,14 @@ locals {
 # NOTE: The auth policy cannot be scoped to the exact VPN server instance ID because the VPN can't be provisioned
 # without the cert from secrets manager, but it cant grab the cert from secrets manager until the policy is created.
 resource "ibm_iam_authorization_policy" "policy" {
-  count                       = var.create_s2s_auth_policy ? 1 : 0
+  count                       = !var.skip_secrets_manager_iam_auth_policy ? 1 : 0
   source_service_name         = "is"
   source_resource_type        = "vpn-server"
   source_resource_group_id    = var.resource_group_id
   target_service_name         = "secrets-manager"
-  target_resource_instance_id = var.secrets_manager_id
+  target_resource_instance_id = module.sm_crn_parser.service_instance
   roles                       = ["SecretsReader"]
-  description                 = "Allow all VPN server instances in the resource group ${var.resource_group_id} to read from the Secrets Manager instance with ID ${var.secrets_manager_id}"
+  description                 = "Allow all VPN server instances in the resource group ${var.resource_group_id} to read from the Secrets Manager instance with ID ${module.sm_crn_parser.service_instance}"
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
@@ -24,6 +24,12 @@ resource "time_sleep" "wait_for_authorization_policy" {
   depends_on = [ibm_iam_authorization_policy.policy]
 
   create_duration = "30s"
+}
+
+module "sm_crn_parser" {
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.server_cert_crn
 }
 
 # Access groups

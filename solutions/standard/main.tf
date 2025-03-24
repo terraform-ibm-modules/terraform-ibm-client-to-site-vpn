@@ -356,7 +356,6 @@ module "vpn" {
   create_policy                 = var.create_policy
   vpn_client_access_group_users = var.vpn_client_access_group_users
   access_group_name             = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.access_group_name}" : var.access_group_name
-  secrets_manager_id            = module.existing_sm_crn_parser.service_instance
   vpn_server_routes             = local.vpn_server_routes
   existing_security_group_ids   = var.existing_security_group_ids
 }

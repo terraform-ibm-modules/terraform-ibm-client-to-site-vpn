@@ -63,7 +63,6 @@ module "client_to_site_vpn" {
   server_cert_crn              = "crn:<...>" # CRN to a server secret or certificate in Secrets Manager
   vpn_gateway_name             = "example-vpn"
   resource_group_id            = "65xxxxxxxxxxxxxxxa3fd"
-  secrets_manager_id           = "839fxxxx-xxxx-xxxx-xxxx-xxxxxxx913b9"
   subnet_ids                   = ["0726-ec96c7cd-46f4-4969-9009-7613f8e9e93"] # A list of IDs of subnets dedicated to the VPN in the VPC.
 }
 ```
@@ -90,7 +89,9 @@ You need the following permissions to run this module.
 
 ### Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_sm_crn_parser"></a> [sm\_crn\_parser](#module\_sm\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 
 ### Resources
 
@@ -114,12 +115,11 @@ No modules.
 | <a name="input_client_idle_timeout"></a> [client\_idle\_timeout](#input\_client\_idle\_timeout) | The seconds a VPN client can be idle before this VPN server will disconnect it. Default set to 30m (1800 secs). Specify 0 to prevent the server from disconnecting idle clients. | `number` | `1800` | no |
 | <a name="input_client_ip_pool"></a> [client\_ip\_pool](#input\_client\_ip\_pool) | The VPN client IPv4 address pool, expressed in CIDR format. The request must not overlap with any existing address prefixes in the VPC or any of the following reserved address ranges: - 127.0.0.0/8 (IPv4 loopback addresses) - 161.26.0.0/16 (IBM services) - 166.8.0.0/14 (Cloud Service Endpoints) - 169.254.0.0/16 (IPv4 link-local addresses) - 224.0.0.0/4 (IPv4 multicast addresses). The prefix length of the client IP address pool's CIDR must be between /9 (8,388,608 addresses) and /22 (1024 addresses). A CIDR block that contains twice the number of IP addresses that are required to enable the maximum number of concurrent connections is recommended. | `string` | `"10.0.0.0/20"` | no |
 | <a name="input_create_policy"></a> [create\_policy](#input\_create\_policy) | Set to true to create a new access group (using the value of var.access\_group\_name) with a VPN Client role | `bool` | `true` | no |
-| <a name="input_create_s2s_auth_policy"></a> [create\_s2s\_auth\_policy](#input\_create\_s2s\_auth\_policy) | Create IAM Service to Service Authorization to allow communication between all VPN Servers (scoped to the given resource group) and the given Secrets Manager instance. Currently not possible to scope the policy to the exact VPN server ID since the policy is needed before the instance exists as it uses the cert stored in secrets manager during the provisioning process. | `bool` | `true` | no |
 | <a name="input_enable_split_tunneling"></a> [enable\_split\_tunneling](#input\_enable\_split\_tunneling) | Enables split tunnel mode for the Client to Site VPN server | `bool` | `true` | no |
 | <a name="input_existing_security_group_ids"></a> [existing\_security\_group\_ids](#input\_existing\_security\_group\_ids) | The existing security groups ID to use for this VPN server. If unspecified, the VPC's default security group is used | `list(string)` | `[]` | no |
 | <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | ID of the resource group to use when creating the VPN server | `string` | n/a | yes |
-| <a name="input_secrets_manager_id"></a> [secrets\_manager\_id](#input\_secrets\_manager\_id) | ID of the Secrets Manager that contains the certificate to use for the VPN, only required when create\_s2s\_auth\_policy is true. | `string` | `null` | no |
 | <a name="input_server_cert_crn"></a> [server\_cert\_crn](#input\_server\_cert\_crn) | CRN of a secret in Secrets Manager that contains the certificate to use for the VPN | `string` | n/a | yes |
+| <a name="input_skip_secrets_manager_iam_auth_policy"></a> [skip\_secrets\_manager\_iam\_auth\_policy](#input\_skip\_secrets\_manager\_iam\_auth\_policy) | Whether to create an IAM authorization policy that permits communication between all VPN Servers (scoped to the given resource group) and the given Secrets Manager instance. Currently not possible to scope the policy to the exact VPN server ID since the policy is needed before the instance exists as it uses the cert stored in secrets manager during the provisioning process. | `bool` | `false` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to provision this VPN server in. List must have at least 1 subnet ID for standalone VPN and at least 2 subnet IDs for the High Availability mode. | `list(string)` | n/a | yes |
 | <a name="input_vpn_client_access_group_users"></a> [vpn\_client\_access\_group\_users](#input\_vpn\_client\_access\_group\_users) | List of users to optionally add to the Client to Site VPN Access Group if var.create\_policy is true | `list(string)` | `[]` | no |
 | <a name="input_vpn_gateway_name"></a> [vpn\_gateway\_name](#input\_vpn\_gateway\_name) | The user-defined name for the VPN server. If unspecified, the name will be a hyphenated list of randomly-selected words. Names must be unique within the VPC the VPN server is serving. | `string` | n/a | yes |
