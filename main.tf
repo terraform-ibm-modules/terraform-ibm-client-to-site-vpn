@@ -9,7 +9,7 @@ locals {
 # NOTE: The auth policy cannot be scoped to the exact VPN server instance ID because the VPN can't be provisioned
 # without the cert from secrets manager, but it cant grab the cert from secrets manager until the policy is created.
 resource "ibm_iam_authorization_policy" "policy" {
-  count                       = !var.skip_secrets_manager_iam_auth_policy ? 1 : 0
+  count                       = var.skip_secrets_manager_iam_auth_policy ? 0 : 1
   source_service_name         = "is"
   source_resource_type        = "vpn-server"
   source_resource_group_id    = var.resource_group_id
