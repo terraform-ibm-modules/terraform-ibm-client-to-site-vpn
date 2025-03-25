@@ -2,11 +2,6 @@ locals {
   # There is a provider bug generating "module-metadata.json" where variable value is not access directly.
   # https://github.com/IBM-Cloud/terraform-config-inspect/issues/19
   subnet_ids = var.subnet_ids
-
-  secrets_manager_validate_condition = (var.create_s2s_auth_policy == true && var.secrets_manager_id == null)
-  secrets_manager_validate_msg       = "Value for 'secrets_manager_id' must not be null if 'create_s2s_auth_policy' is true"
-  # tflint-ignore: terraform_unused_declarations
-  secrets_manager_validate_check = regex("^${local.secrets_manager_validate_msg}$", (!local.secrets_manager_validate_condition ? local.secrets_manager_validate_msg : ""))
 }
 
 # IAM Service to Service Authorization
@@ -14,14 +9,14 @@ locals {
 # NOTE: The auth policy cannot be scoped to the exact VPN server instance ID because the VPN can't be provisioned
 # without the cert from secrets manager, but it cant grab the cert from secrets manager until the policy is created.
 resource "ibm_iam_authorization_policy" "policy" {
-  count                       = var.create_s2s_auth_policy ? 1 : 0
+  count                       = var.skip_secrets_manager_iam_auth_policy ? 0 : 1
   source_service_name         = "is"
   source_resource_type        = "vpn-server"
   source_resource_group_id    = var.resource_group_id
   target_service_name         = "secrets-manager"
-  target_resource_instance_id = var.secrets_manager_id
+  target_resource_instance_id = module.sm_crn_parser.service_instance
   roles                       = ["SecretsReader"]
-  description                 = "Allow all VPN server instances in the resource group ${var.resource_group_id} to read from the Secrets Manager instance with ID ${var.secrets_manager_id}"
+  description                 = "Allow all VPN server instances in the resource group ${var.resource_group_id} to read from the Secrets Manager instance with ID ${module.sm_crn_parser.service_instance}"
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
@@ -29,6 +24,12 @@ resource "time_sleep" "wait_for_authorization_policy" {
   depends_on = [ibm_iam_authorization_policy.policy]
 
   create_duration = "30s"
+}
+
+module "sm_crn_parser" {
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.server_cert_crn
 }
 
 # Access groups

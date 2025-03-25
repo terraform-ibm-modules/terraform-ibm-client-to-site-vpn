@@ -195,7 +195,6 @@ module "vpn" {
   create_policy                 = true
   vpn_client_access_group_users = var.vpn_client_access_group_users
   access_group_name             = (var.prefix != null && var.prefix != "") ? "${var.prefix}-client-to-site-vpn-access-group" : "client-to-site-vpn-access-group"
-  secrets_manager_id            = module.existing_sm_crn_parser.service_instance
   vpn_server_routes             = local.vpn_server_routes
 }
 

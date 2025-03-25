@@ -80,6 +80,11 @@ variable "create_policy" {
   description = "Set to true to create a new access group (using the value of var.access_group_name) with a VPN Client role"
   type        = bool
   default     = true
+
+  validation {
+    condition     = var.create_policy ? var.access_group_name != null : true
+    error_message = "Value for 'access_group_name' input variable must not be null if 'create_s2s_auth_policy' input variable is true"
+  }
 }
 
 variable "vpn_client_access_group_users" {
@@ -94,16 +99,10 @@ variable "access_group_name" {
   default     = "client-to-site-vpn-access-group"
 }
 
-variable "create_s2s_auth_policy" {
+variable "skip_secrets_manager_iam_auth_policy" {
   type        = bool
-  description = "Create IAM Service to Service Authorization to allow communication between all VPN Servers (scoped to the given resource group) and the given Secrets Manager instance. Currently not possible to scope the policy to the exact VPN server ID since the policy is needed before the instance exists as it uses the cert stored in secrets manager during the provisioning process."
-  default     = true
-}
-
-variable "secrets_manager_id" {
-  type        = string
-  description = "ID of the Secrets Manager that contains the certificate to use for the VPN, only required when create_s2s_auth_policy is true."
-  default     = null
+  description = "Specifies whether to create an IAM authorization policy with the SecretsReader role, allowing communication between all VPN servers (scoped to the specified resource group) and the given Secrets Manager instance. Currently, it is not possible to scope the policy to the exact VPN server ID, as the policy must be created before the instance exists. This is because the policy uses the certificate stored in Secrets Manager during the provisioning process."
+  default     = false
 }
 
 ##############################################################################

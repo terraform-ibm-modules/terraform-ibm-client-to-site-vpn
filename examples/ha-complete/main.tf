@@ -142,6 +142,5 @@ module "vpn" {
   create_policy                 = var.create_policy
   vpn_client_access_group_users = var.vpn_client_access_group_users
   access_group_name             = "${var.prefix}-${var.access_group_name}"
-  secrets_manager_id            = local.sm_guid
   vpn_server_routes             = var.vpn_server_routes
 }
