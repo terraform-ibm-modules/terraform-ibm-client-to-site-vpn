@@ -25,7 +25,7 @@ module "existing_sm_crn_parser" {
 # Create a secret group to place the certificate if provisioning a new certificate
 module "secrets_manager_secret_group" {
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.2.3"
+  version                  = "1.3.1"
   region                   = module.existing_sm_crn_parser.region
   secrets_manager_guid     = module.existing_sm_crn_parser.service_instance
   secret_group_name        = (var.prefix != null && var.prefix != "") ? "${var.prefix}-cert-secret-group" : "cert-secret-group"
@@ -38,7 +38,7 @@ module "secrets_manager_secret_group" {
 # Create private certificate to use for VPN server
 module "secrets_manager_private_certificate" {
   source                 = "terraform-ibm-modules/secrets-manager-private-cert/ibm"
-  version                = "1.3.2"
+  version                = "1.3.3"
   cert_name              = (var.prefix != null && var.prefix != "") ? "${var.prefix}-cts-vpn-private-cert" : "cts-vpn-private-cert"
   cert_description       = "private certificate for client to site VPN connection"
   cert_template          = var.certificate_template_name
