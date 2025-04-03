@@ -106,8 +106,7 @@
             },
             {
               "key": "prefix",
-              "required": true,
-              "description": "Prefix to add to all resources that this solution creates. Must begin with a letter and contain only lowercase letters, numbers, and - characters. To not use any prefix value, you can enter the string `__NULL__`."
+              "required": true
             },
             {
               "key": "use_existing_resource_group"
@@ -263,8 +262,7 @@
             },
             {
               "key": "prefix",
-              "required": true,
-              "description": "Prefix to add to all resources that this solution creates. Must begin with a letter and contain only lowercase letters, numbers, and - characters. To not use any prefix value, you can enter the string `__NULL__`."
+              "required": true
             },
             {
               "key": "use_existing_resource_group"
