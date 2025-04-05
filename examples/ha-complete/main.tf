@@ -13,7 +13,7 @@ locals {
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.1.6"
+  version = "1.2.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -26,7 +26,7 @@ module "resource_group" {
 # Create a new SM instance if not using an existing one
 module "secrets_manager" {
   source               = "terraform-ibm-modules/secrets-manager/ibm"
-  version              = "2.0.0"
+  version              = "2.1.1"
   count                = var.existing_sm_instance_guid == null ? 1 : 0
   resource_group_id    = module.resource_group.resource_group_id
   region               = local.sm_region
@@ -91,7 +91,7 @@ module "secrets_manager_private_certificate" {
 # Minimal VPC for illustration purpose: 2 subnets across 2 availability zones
 module "basic_vpc" {
   source               = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version              = "7.22.2"
+  version              = "7.22.5"
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   name                 = "vpc"

@@ -4,7 +4,7 @@
 
 module "landing_zone" {
   source                 = "terraform-ibm-modules/landing-zone/ibm//patterns//vpc//module"
-  version                = "7.4.2"
+  version                = "7.4.3"
   region                 = var.region
   prefix                 = var.prefix
   tags                   = var.resource_tags
@@ -17,7 +17,7 @@ module "landing_zone" {
 ################################################################################
 module "resource_group" {
   source              = "terraform-ibm-modules/resource-group/ibm"
-  version             = "1.1.6"
+  version             = "1.2.0"
   resource_group_name = "${var.prefix}-rg"
 }
 
