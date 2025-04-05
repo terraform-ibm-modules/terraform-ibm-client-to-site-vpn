@@ -307,6 +307,9 @@
               "key": "vpn_server_routes"
             },
             {
+              "key": "vpn_route_action"
+            },
+            {
               "key": "existing_vpc_crn"
             },
             {
@@ -319,7 +322,16 @@
               "key": "client_ip_pool"
             },
             {
+              "key": "client_dns_server_ips"
+            },
+            {
               "key": "vpn_client_access_acl_ids"
+            },
+            {
+              "key": "client_idle_timeout"
+            },
+            {
+              "key": "enable_split_tunneling"
             },
             {
               "key": "add_security_group"

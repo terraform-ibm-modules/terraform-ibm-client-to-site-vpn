@@ -172,6 +172,31 @@ variable "existing_security_group_ids" {
   nullable    = false
 }
 
+variable "client_dns_server_ips" {
+  type        = list(string)
+  description = "DNS server addresses that will be provided to VPN clients connected to this VPN server"
+  default     = []
+}
+
+variable "vpn_route_action" {
+  type        = string
+  description = "The action to perform with a packet matching the VPN route. The same action will be applied to all routes."
+  default     = "deliver"
+  nullable    = false
+}
+
+variable "client_idle_timeout" {
+  type        = number
+  description = "The seconds a VPN client can be idle before this VPN server will disconnect it. Default set to 30m (1800 secs). Specify 0 to prevent the server from disconnecting idle clients."
+  default     = 1800
+}
+
+variable "enable_split_tunneling" {
+  type        = bool
+  description = "Enables split tunnel mode for the Client to Site VPN server"
+  default     = true
+}
+
 ##############################################################################
 # Provider
 ##############################################################################
