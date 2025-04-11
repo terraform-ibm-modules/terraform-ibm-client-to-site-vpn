@@ -1,13 +1,12 @@
 variable "ibmcloud_api_key" {
   type        = string
-  description = "The IBM Cloud platform API key needed to deploy resources."
+  description = "The IBM Cloud API key to deploy resources."
   sensitive   = true
 }
 
 variable "prefix" {
   type        = string
-  description = "Optional. The prefix to add to all resources that this solution creates. Must begin with a letter and contain only lowercase letters, numbers, and - characters. To not use any prefix value, you can set this value to `null` or an empty string."
-  default     = "standard"
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). Must begin with a letter and contain only lowercase letters, numbers, and - characters. To not use any prefix value, you can set this value to `null` or an empty string."
 
   validation {
     error_message = "Prefix must begin with a letter and contain only lowercase letters, numbers, and - characters."
@@ -15,21 +14,15 @@ variable "prefix" {
   }
 }
 
-variable "resource_group_name" {
+variable "existing_resource_group_name" {
   type        = string
-  description = "The name of a new or the existing resource group to provision the client to site VPN. If a prefix input variable is passed, it is prefixed to the value in the `<prefix>-value` format."
-}
-
-variable "use_existing_resource_group" {
-  type        = bool
-  description = "Whether to use an existing resource group."
-  default     = false
-  nullable    = false
+  description = "The name of a an existing resource group in which to provision resources to."
+  default     = "Default"
 }
 
 variable "vpn_name" {
   type        = string
-  description = "The name of the VPN. If a prefix input variable is passed, it is prefixed to the value in the `<prefix>-value` format."
+  description = "The name of the VPN. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
   default     = "cts-vpn"
   nullable    = false
 }
@@ -40,31 +33,59 @@ variable "vpn_name" {
 
 variable "existing_secrets_manager_instance_crn" {
   type        = string
-  description = "The CRN of existing secrets manager where the certificate to use for the VPN is stored or where the new certificate will be created."
+  description = "The CRN of existing secrets manager where the certificate to use for the VPN is stored or where the new private certificate will be created."
 }
 
 variable "existing_secrets_manager_cert_crn" {
   type        = string
   description = "The CRN of existing secrets manager private certificate to use to create VPN. If the value is null, then new private certificate is created."
   default     = null
+
+  validation {
+    condition     = var.existing_secrets_manager_cert_crn == null ? var.private_cert_engine_config_template_name != null && var.private_cert_engine_config_root_ca_common_name != null : true
+    error_message = "Set 'private_cert_engine_config_root_ca_common_name' and 'private_cert_engine_config_template_name' input variables if a 'existing_secrets_manager_cert_crn' input variable is not set"
+  }
+
+  validation {
+    condition     = var.existing_secrets_manager_cert_crn != null ? var.private_cert_engine_config_template_name == null && var.private_cert_engine_config_root_ca_common_name == null : true
+    error_message = "'private_cert_engine_config_root_ca_common_name' and 'private_cert_engine_config_template_name' input variables can not be set if a 'existing_secrets_manager_cert_crn' input variable is already set"
+  }
 }
 
 variable "existing_secrets_manager_secret_group_id" {
   type        = string
-  description = "The CRN of existing secrets manager secret group id used for new created certificate. If the value is null, then new secrets manager secret group is created."
+  description = "The ID of existing secrets manager secret group used for new created certificate. If the value is null, then new secrets manager secret group is created."
   default     = null
 }
 
-variable "cert_common_name" {
+variable "private_cert_engine_config_root_ca_common_name" {
   type        = string
   description = "A fully qualified domain name or host domain name for the certificate to be created. Only used when `existing_secrets_manager_cert_crn` input variable is `null`."
   default     = null
 }
 
-variable "certificate_template_name" {
+variable "private_cert_engine_config_template_name" {
   type        = string
   description = "The name of the Certificate Template to create for a private certificate secret engine. When `existing_secrets_manager_cert_crn` input variable is `null`, then it has to be the existing template name that exists in the private cert engine."
   default     = null
+}
+
+variable "client_dns_server_ips" {
+  type        = list(string)
+  description = "DNS server addresses that will be provided to VPN clients connected to this VPN server"
+  default     = []
+}
+
+variable "enable_split_tunneling" {
+  type        = bool
+  description = "Enables split tunnel mode for the Client to Site VPN server"
+  default     = true
+}
+
+variable "client_idle_timeout" {
+  type        = number
+  description = "The seconds a VPN client can be idle before this VPN server will disconnect it. Default set to 30m (1800 secs). Specify 0 to prevent the server from disconnecting idle clients."
+  default     = 1800
 }
 
 ##############################################################################
@@ -74,7 +95,7 @@ variable "certificate_template_name" {
 variable "vpn_subnet_cidr_zone_1" {
   type        = string
   description = "The CIDR range to use for subnet creation from the first zone in the region (or zone specified in the 'vpn_zone_1' input variable). Ensure it's not conflicting with any existing subnets. Must be set if 'existing_subnet_ids' input variable is not set."
-  default     = null
+  default     = "10.10.40.0/24"
 }
 
 variable "vpn_subnet_cidr_zone_2" {
@@ -86,6 +107,7 @@ variable "vpn_subnet_cidr_zone_2" {
 variable "remote_cidr" {
   type        = string
   description = "The source CIDR block to use for creating ACL rule and security group (if add_security_group input variable is set to true). By default the deny all inbound and outbound ACL rule is created. Must be set if 'existing_subnet_ids' input variable is not set."
+  default     = "0.0.0.0/0"
 }
 
 variable "add_security_group" {
@@ -118,13 +140,13 @@ variable "create_policy" {
 variable "vpn_server_routes" {
   type        = list(string)
   description = "A map of server routes to be added to created VPN server. By default the route (166.8.0.0/14) for PaaS IBM Cloud backbone is added (mostly used to give access to the Kube master endpoints) and 161.26.0.0/16 (IaaS)."
-  default     = []
+  default     = ["10.0.0.0/8"]
   nullable    = false
 }
 
 variable "existing_vpc_crn" {
   type        = string
-  description = "Crn of the VPC in which the VPN infrastructure will be created."
+  description = "Crn of the existing VPC in which the VPN infrastructure will be created."
 }
 
 variable "vpn_zone_1" {
@@ -149,6 +171,16 @@ variable "existing_subnet_ids" {
     error_message = "The existing_subnet_ids input variable supports a maximum of 2 subnets."
     condition     = (length(var.existing_subnet_ids) == 0 || length(var.existing_subnet_ids) < 3)
   }
+
+  validation {
+    condition     = length(var.existing_subnet_ids) <= 0 ? var.vpn_subnet_cidr_zone_1 != null && var.remote_cidr != null : true
+    error_message = "Set 'vpn_subnet_cidr_zone_1' and 'remote_cidr input variables' if 'existing_subnet_ids' input variable is not set."
+  }
+
+  validation {
+    condition     = length(var.existing_subnet_ids) > 0 ? (var.vpn_subnet_cidr_zone_1 == null && var.remote_cidr == null) : true
+    error_message = "'vpn_subnet_cidr_zone_1' and 'remote_cidr' input variables can not be set if a 'existing_subnet_ids' input variable is already set"
+  }
 }
 
 variable "client_ip_pool" {
@@ -169,6 +201,18 @@ variable "existing_security_group_ids" {
   description = "The existing security groups ID to use for this VPN server. If unspecified, the VPC's default security group is used. To use existing security groups, the 'add_security_group' input variable must be set to 'false'"
   type        = list(string)
   default     = []
+  nullable    = false
+
+  validation {
+    condition     = length(var.existing_security_group_ids) > 0 ? var.add_security_group == false : true
+    error_message = "When 'existing_security_group_ids' input variable is set, then 'add_security_group' input variable should be set to false."
+  }
+}
+
+variable "vpn_route_action" {
+  type        = string
+  description = "The action to perform with a packet matching the VPN route. The same action will be applied to all routes."
+  default     = "deliver"
   nullable    = false
 }
 
