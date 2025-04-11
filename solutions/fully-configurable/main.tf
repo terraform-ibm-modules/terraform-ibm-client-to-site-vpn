@@ -4,8 +4,7 @@
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
   version                      = "1.2.0"
-  resource_group_name          = var.use_existing_resource_group == false ? ((var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.resource_group_name}" : var.resource_group_name) : null
-  existing_resource_group_name = var.use_existing_resource_group == true ? var.resource_group_name : null
+  existing_resource_group_name = var.existing_resource_group_name
 }
 
 ########################################################################################################################
@@ -14,9 +13,6 @@ module "resource_group" {
 locals {
   secrets_manager_cert_crn        = var.existing_secrets_manager_cert_crn != null ? var.existing_secrets_manager_cert_crn : module.secrets_manager_private_certificate[0].secret_crn
   secrets_manager_secret_group_id = var.existing_secrets_manager_cert_crn != null ? null : var.existing_secrets_manager_secret_group_id != null ? var.existing_secrets_manager_secret_group_id : module.secrets_manager_secret_group[0].secret_group_id
-
-  # tflint-ignore: terraform_unused_declarations
-  validate_encryption_inputs = var.existing_secrets_manager_cert_crn == null && (var.cert_common_name == null || var.certificate_template_name == null) ? tobool("Set cert_common_name and certificate_template_name input variables if a 'existing_secrets_manager_cert_crn' input variable is not set") : true
 }
 module "existing_sm_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
@@ -52,9 +48,9 @@ module "secrets_manager_private_certificate" {
   version                = "1.3.3"
   cert_name              = (var.prefix != null && var.prefix != "") ? "${var.prefix}-cts-vpn-private-cert" : "cts-vpn-private-cert"
   cert_description       = "private certificate for client to site VPN connection"
-  cert_template          = var.certificate_template_name
+  cert_template          = var.private_cert_engine_config_template_name
   cert_secrets_group_id  = local.secrets_manager_secret_group_id
-  cert_common_name       = var.cert_common_name
+  cert_common_name       = var.private_cert_engine_config_root_ca_common_name
   secrets_manager_guid   = module.existing_sm_crn_parser.service_instance
   secrets_manager_region = module.existing_sm_crn_parser.region
   providers = {
@@ -66,17 +62,15 @@ module "secrets_manager_private_certificate" {
 # Deploy client-to-site in a dedicated subnets in the VPC
 ##############################################################################
 locals {
-  # tflint-ignore: terraform_unused_declarations
-  validate_existing_subnet_ids_inputs = length(var.existing_subnet_ids) <= 0 && (var.vpn_subnet_cidr_zone_1 == null || var.vpn_subnet_cidr_zone_2 == null || var.remote_cidr == null) ? tobool("Set 'vpn_subnet_cidr_zone_1', 'vpn_subnet_cidr_zone_2' and 'remote_cidr input variables' if 'existing_subnet_ids' input variable is not set") : true
-
   vpc_region      = module.existing_vpc_crn_parser.region
   existing_vpc_id = module.existing_vpc_crn_parser.resource
-  subnet_ids      = length(var.existing_subnet_ids) > 0 ? var.existing_subnet_ids : [ibm_is_subnet.client_to_site_subnet_zone_1[0].id, ibm_is_subnet.client_to_site_subnet_zone_2[0].id]
+  subnet_ids      = length(var.existing_subnet_ids) > 0 ? var.existing_subnet_ids : var.vpn_subnet_cidr_zone_2 == null ? [ibm_is_subnet.client_to_site_subnet_zone_1[0].id] : [ibm_is_subnet.client_to_site_subnet_zone_1[0].id, ibm_is_subnet.client_to_site_subnet_zone_2[0].id]
   zone_1          = var.vpn_zone_1 != null ? var.vpn_zone_1 : "${local.vpc_region}-1" # hardcode to first zone in region
   zone_2          = var.vpn_zone_2 != null ? var.vpn_zone_2 : "${local.vpc_region}-2" # hardcode to second zone in region
   target_ids      = [module.vpn.vpn_server_id]
 
-  subnet_cidrs = [var.vpn_subnet_cidr_zone_1, var.vpn_subnet_cidr_zone_2, var.client_ip_pool]
+  # if translate mode is used for routes, then we do not need to have the client IP pool range in the rules
+  subnet_cidrs = var.vpn_route_action == "translate" ? compact([var.vpn_subnet_cidr_zone_1, var.vpn_subnet_cidr_zone_2]) : compact([var.vpn_subnet_cidr_zone_1, var.vpn_subnet_cidr_zone_2, var.client_ip_pool])
 
   ##############################################################################
   # ACL rules
@@ -98,10 +92,10 @@ locals {
       }
     }
   ]
-  acl_outbound_rules_udp = [
+  acl_outbound_rules_udp_443 = [
     for i, subnet_cidr in local.subnet_cidrs :
     {
-      name        = "outbound-udp-${i}"
+      name        = "outbound-udp-443-${i}"
       action      = "allow"
       source      = subnet_cidr
       destination = var.remote_cidr
@@ -109,6 +103,21 @@ locals {
       udp = {
         source_port_min = 443
         source_port_max = 443
+      }
+      tcp = null
+    }
+  ]
+  acl_outbound_rules_udp_53 = [
+    for i, client_dns_server_ip in var.client_dns_server_ips :
+    {
+      name        = "outbound-udp-53-${i}"
+      action      = "allow"
+      source      = client_dns_server_ip
+      destination = var.remote_cidr
+      direction   = "outbound"
+      udp = {
+        port_min = 53
+        port_max = 53
       }
       tcp = null
     }
@@ -130,10 +139,10 @@ locals {
       udp = null
     }
   ]
-  acl_inbound_rules_udp = [
+  acl_inbound_rules_udp_443 = [
     for i, subnet_cidr in local.subnet_cidrs :
     {
-      name        = "inbound-udp-${i}"
+      name        = "inbound-udp-443-${i}"
       action      = "allow"
       source      = var.remote_cidr
       destination = subnet_cidr
@@ -145,11 +154,21 @@ locals {
       tcp = null
     }
   ]
-  acl_object = length(var.existing_subnet_ids) <= 0 ? {
-    "vpn-network-acl-rule" = {
-      rules = concat(local.acl_inbound_rules_tcp, local.acl_inbound_rules_udp, local.acl_outbound_rules_tcp, local.acl_outbound_rules_udp, local.deny_all_rules),
+  acl_inbound_rules_udp_53 = [
+    for i, client_dns_server_ip in var.client_dns_server_ips :
+    {
+      name        = "inbound-udp-53-${i}"
+      action      = "allow"
+      source      = var.remote_cidr
+      destination = client_dns_server_ip
+      direction   = "inbound"
+      udp = {
+        source_port_min = 53
+        source_port_max = 53
+      }
+      tcp = null
     }
-  } : {}
+  ]
   deny_all_rules = [
     {
       name        = "ibmflow-deny-all-inbound"
@@ -172,6 +191,11 @@ locals {
       icmp        = null
     }
   ]
+  acl_object = length(var.existing_subnet_ids) <= 0 ? {
+    var.prefix != null && var.prefix != "" ? "${var.prefix}-vpn-acl" : "vpn-acl" = {
+      rules = concat(local.acl_inbound_rules_tcp, local.acl_inbound_rules_udp_443, local.acl_inbound_rules_udp_53, local.acl_outbound_rules_tcp, local.acl_outbound_rules_udp_443, local.acl_outbound_rules_udp_53, local.deny_all_rules),
+    }
+  } : {}
   ##############################################################################
 
   security_group_rule = [{
@@ -190,17 +214,17 @@ locals {
       # Add route for PaaS IBM Cloud backbone. This is mostly used to give access to the Kube master endpoints.
       "vpc-166" = {
         destination = "166.8.0.0/14"
-        action      = "deliver"
+        action      = var.vpn_route_action
       },
       # Add route for IaaS IBM Cloud backbone.
       "vpc-161" = {
         destination = "161.26.0.0/16"
-        action      = "deliver"
+        action      = var.vpn_route_action
       }
     },
     {
       for i, r in var.vpn_server_routes : "vpc-${i}" => {
-        "action"      = "deliver"
+        "action"      = var.vpn_route_action
         "destination" = r
       }
     }
@@ -222,7 +246,7 @@ resource "ibm_is_vpc_address_prefix" "client_to_site_address_prefixes_zone_1" {
 }
 
 resource "ibm_is_vpc_address_prefix" "client_to_site_address_prefixes_zone_2" {
-  count = length(var.existing_subnet_ids) > 0 ? 0 : 1
+  count = length(var.existing_subnet_ids) > 0 || var.vpn_subnet_cidr_zone_2 == null ? 0 : 1
   name  = (var.prefix != null && var.prefix != "") ? "${var.prefix}-client-to-site-address-prefixes-2" : "client-to-site-address-prefixes-2"
   zone  = local.zone_2
   vpc   = local.existing_vpc_id
@@ -230,9 +254,10 @@ resource "ibm_is_vpc_address_prefix" "client_to_site_address_prefixes_zone_2" {
 }
 
 resource "ibm_is_network_acl" "client_to_site_vpn_acl" {
-  for_each = local.acl_object
-  name     = each.key
-  vpc      = local.existing_vpc_id
+  for_each       = local.acl_object
+  name           = each.key
+  vpc            = local.existing_vpc_id
+  resource_group = module.resource_group.resource_group_id
 
   # Create ACL rules
   dynamic "rules" {
@@ -278,7 +303,7 @@ resource "ibm_is_subnet" "client_to_site_subnet_zone_1" {
 }
 
 resource "ibm_is_subnet" "client_to_site_subnet_zone_2" {
-  count           = length(var.existing_subnet_ids) > 0 ? 0 : 1
+  count           = length(var.existing_subnet_ids) > 0 || var.vpn_subnet_cidr_zone_2 == null ? 0 : 1
   depends_on      = [ibm_is_vpc_address_prefix.client_to_site_address_prefixes_zone_2]
   name            = (var.prefix != null && var.prefix != "") ? "${var.prefix}-client-to-site-subnet-2" : "client-to-site-subnet-2"
   vpc             = local.existing_vpc_id
@@ -358,6 +383,10 @@ module "vpn" {
   access_group_name             = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.access_group_name}" : var.access_group_name
   vpn_server_routes             = local.vpn_server_routes
   existing_security_group_ids   = var.existing_security_group_ids
+  client_ip_pool                = var.client_ip_pool
+  client_dns_server_ips         = var.client_dns_server_ips
+  client_idle_timeout           = var.client_idle_timeout
+  enable_split_tunneling        = var.enable_split_tunneling
 }
 
 # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/issues/45
@@ -377,11 +406,6 @@ module "client_to_site_sg" {
   resource_group               = module.resource_group.resource_group_id
   security_group_name          = (var.prefix != null && var.prefix != "") ? "${var.prefix}-client-to-site-sg" : "client-to-site-sg"
   security_group_rules         = local.security_group_rule
-}
-
-locals {
-  # tflint-ignore: terraform_unused_declarations
-  validate_kms_vars = length(var.existing_security_group_ids) > 0 && var.add_security_group == true ? tobool("When 'existing_security_group_ids' input variable is set, then 'add_security_group' input variable should be set to false.") : true
 }
 
 # we add security group target after VPN and client_to_site_sg are created. Otherwise cycle dependency error is thrown

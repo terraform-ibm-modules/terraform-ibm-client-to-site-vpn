@@ -83,7 +83,7 @@ variable "create_policy" {
 
   validation {
     condition     = var.create_policy ? var.access_group_name != null : true
-    error_message = "Value for 'access_group_name' input variable must not be null if 'create_s2s_auth_policy' input variable is true"
+    error_message = "Value for 'access_group_name' input variable must not be null if 'create_policy' input variable is true"
   }
 }
 
