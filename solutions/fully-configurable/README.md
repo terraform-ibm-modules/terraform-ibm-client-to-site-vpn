@@ -1,4 +1,4 @@
-# Quickstart client to site VPN solution
+# Cloud automation for Client to Site VPN
 
 This solution supports provisioning and configuring the following infrastructure:
 
@@ -20,7 +20,7 @@ This solution supports provisioning and configuring the following infrastructure
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.76.3 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.77.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | 0.13.0 |
 
 ### Modules
@@ -40,17 +40,17 @@ This solution supports provisioning and configuring the following infrastructure
 
 | Name | Type |
 |------|------|
-| [ibm_is_network_acl.client_to_site_vpn_acl](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/resources/is_network_acl) | resource |
-| [ibm_is_network_acl_rule.inbound_acl_rules_subnet1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/resources/is_network_acl_rule) | resource |
-| [ibm_is_network_acl_rule.outbound_acl_rules_subnet1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/resources/is_network_acl_rule) | resource |
-| [ibm_is_security_group_target.sg_target](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/resources/is_security_group_target) | resource |
-| [ibm_is_subnet.client_to_site_subnet_zone_1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/resources/is_subnet) | resource |
-| [ibm_is_subnet.client_to_site_subnet_zone_2](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/resources/is_subnet) | resource |
-| [ibm_is_vpc_address_prefix.client_to_site_address_prefixes_zone_1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/resources/is_vpc_address_prefix) | resource |
-| [ibm_is_vpc_address_prefix.client_to_site_address_prefixes_zone_2](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/resources/is_vpc_address_prefix) | resource |
+| [ibm_is_network_acl.client_to_site_vpn_acl](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_network_acl) | resource |
+| [ibm_is_network_acl_rule.inbound_acl_rules_subnet1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_network_acl_rule) | resource |
+| [ibm_is_network_acl_rule.outbound_acl_rules_subnet1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_network_acl_rule) | resource |
+| [ibm_is_security_group_target.sg_target](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_security_group_target) | resource |
+| [ibm_is_subnet.client_to_site_subnet_zone_1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_subnet) | resource |
+| [ibm_is_subnet.client_to_site_subnet_zone_2](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_subnet) | resource |
+| [ibm_is_vpc_address_prefix.client_to_site_address_prefixes_zone_1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_vpc_address_prefix) | resource |
+| [ibm_is_vpc_address_prefix.client_to_site_address_prefixes_zone_2](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_vpc_address_prefix) | resource |
 | [time_sleep.wait_for_security_group](https://registry.terraform.io/providers/hashicorp/time/0.13.0/docs/resources/sleep) | resource |
-| [ibm_is_network_acl.existing_acls](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/data-sources/is_network_acl) | data source |
-| [ibm_is_subnet.existing_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.3/docs/data-sources/is_subnet) | data source |
+| [ibm_is_network_acl.existing_acls](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/data-sources/is_network_acl) | data source |
+| [ibm_is_subnet.existing_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/data-sources/is_subnet) | data source |
 
 ### Inputs
 

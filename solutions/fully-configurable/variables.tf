@@ -18,12 +18,6 @@ variable "existing_resource_group_name" {
   type        = string
   description = "The name of a an existing resource group in which to provision resources to."
   default     = "Default"
-}
-
-variable "vpn_name" {
-  type        = string
-  description = "The name of the VPN. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
-  default     = "cts-vpn"
   nullable    = false
 }
 
@@ -92,6 +86,13 @@ variable "client_idle_timeout" {
 # client-to-site VPN
 ##############################################################################
 
+variable "vpn_name" {
+  type        = string
+  description = "The name of the VPN. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  default     = "cts-vpn"
+  nullable    = false
+}
+
 variable "vpn_subnet_cidr_zone_1" {
   type        = string
   description = "The CIDR range to use for subnet creation from the first zone in the region (or zone specified in the 'vpn_zone_1' input variable). Ensure it's not conflicting with any existing subnets. Must be set if 'existing_subnet_ids' input variable is not set."
@@ -114,7 +115,6 @@ variable "add_security_group" {
   type        = bool
   description = "Add security group to a new VPN?"
   default     = true
-  nullable    = false
 }
 
 variable "vpn_client_access_group_users" {
@@ -134,7 +134,6 @@ variable "create_policy" {
   description = "Whether to create a new access group (using the value of the 'access_group_name' input variable) with a VPN Client role."
   type        = bool
   default     = true
-  nullable    = false
 }
 
 variable "vpn_server_routes" {
