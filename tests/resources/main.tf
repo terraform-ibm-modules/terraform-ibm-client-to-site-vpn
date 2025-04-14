@@ -4,7 +4,7 @@
 
 module "landing_zone" {
   source                 = "terraform-ibm-modules/landing-zone/ibm//patterns//vpc//module"
-  version                = "7.4.3"
+  version                = "7.4.4"
   region                 = var.region
   prefix                 = var.prefix
   tags                   = var.resource_tags
@@ -70,5 +70,5 @@ module "secrets_manager_private_certificate" {
 
 data "ibm_is_security_group" "vpc_sg" {
   name = "management-vpe-sg"
-  vpc  = [for vpc in module.landing_zone.vpc_data : vpc if vpc.vpc_name == "${module.landing_zone.prefix}-management-vpc"][0].vpc_id
+  vpc  = [for vpc in module.landing_zone.vpc_data : vpc if vpc.vpc_name == "${module.landing_zone.prefix}-management"][0].vpc_id
 }
