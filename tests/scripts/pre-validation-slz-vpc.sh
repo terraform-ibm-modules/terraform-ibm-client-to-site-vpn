@@ -28,25 +28,21 @@ TF_VARS_FILE="terraform.tfvars"
 
   prefix_var_name="prefix"
   prefix_var_value=$(terraform output -state=terraform.tfstate -raw prefix)
-  resource_group_name_var_name="resource_group_name"
-  resource_group_name_var_value=$(terraform output -state=terraform.tfstate -raw resource_group_name)
-  use_existing_resource_group_var_name="use_existing_resource_group"
-  use_existing_resource_group_var_value=true
+  existing_resource_group_name_var_name="existing_resource_group_name"
+  existing_resource_group_name_var_value=$(terraform output -state=terraform.tfstate -raw resource_group_name)
   existing_vpc_crn_var_name="existing_vpc_crn"
   existing_vpc_crn_var_value=$(terraform output -state=terraform.tfstate -raw management_vpc_crn)
 
-  echo "Appending '${prefix_var_name}', '${resource_group_name_var_name}', '${use_existing_resource_group_var_name}' and '${existing_vpc_crn_var_name}' input variable values to ${JSON_FILE}.."
+  echo "Appending '${prefix_var_name}', '${existing_resource_group_name_var_name}', and '${existing_vpc_crn_var_name}' input variable values to ${JSON_FILE}"
 
   cd "${cwd}"
   jq -r --arg prefix_var_name "${prefix_var_name}" \
         --arg prefix_var_value "${prefix_var_value}" \
-        --arg resource_group_name_var_name "${resource_group_name_var_name}" \
-        --arg resource_group_name_var_value "${resource_group_name_var_value}" \
-        --arg use_existing_resource_group_var_name "${use_existing_resource_group_var_name}" \
-        --argjson use_existing_resource_group_var_value "${use_existing_resource_group_var_value}" \
+        --arg existing_resource_group_name_var_name "${existing_resource_group_name_var_name}" \
+        --arg existing_resource_group_name_var_value "${existing_resource_group_name_var_value}" \
         --arg existing_vpc_crn_var_name "${existing_vpc_crn_var_name}" \
         --arg existing_vpc_crn_var_value "${existing_vpc_crn_var_value}" \
-        '. + {($prefix_var_name): $prefix_var_value, ($resource_group_name_var_name): $resource_group_name_var_value, ($use_existing_resource_group_var_name): $use_existing_resource_group_var_value, ($existing_vpc_crn_var_name): $existing_vpc_crn_var_value}' "${JSON_FILE}" > tmpfile && mv tmpfile "${JSON_FILE}" || exit 1
+        '. + {($prefix_var_name): $prefix_var_value, ($existing_resource_group_name_var_name): $existing_resource_group_name_var_value, ($existing_vpc_crn_var_name): $existing_vpc_crn_var_value}' "${JSON_FILE}" > tmpfile && mv tmpfile "${JSON_FILE}" || exit 1
 
   echo "Pre-validation complete successfully"
 )
