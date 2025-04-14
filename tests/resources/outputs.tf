@@ -8,12 +8,12 @@ output "prefix" {
 }
 
 output "management_vpc_crn" {
-  value       = [for vpc in module.landing_zone.vpc_data : vpc if vpc.vpc_name == "${module.landing_zone.prefix}-management-vpc"][0].vpc_crn
+  value       = [for vpc in module.landing_zone.vpc_data : vpc if vpc.vpc_name == "${module.landing_zone.prefix}-management"][0].vpc_crn
   description = "CRN of management VPC"
 }
 
 output "default_network_acl_id" {
-  value       = [for vpc in module.landing_zone.vpc_data : vpc if vpc.vpc_name == "${module.landing_zone.prefix}-management-vpc"][0].vpc_data.default_network_acl
+  value       = [for vpc in module.landing_zone.vpc_data : vpc if vpc.vpc_name == "${module.landing_zone.prefix}-management"][0].vpc_data.default_network_acl
   description = "Default network ACL id"
 }
 
