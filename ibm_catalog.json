@@ -238,8 +238,22 @@
               }
             },
             {
-              "hidden": true,
-              "key": "provider_visibility"
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ],
+              "hidden": true
             }
           ],
           "iam_permissions": [
