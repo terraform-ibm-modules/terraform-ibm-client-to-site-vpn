@@ -68,6 +68,7 @@ variable "client_dns_server_ips" {
   type        = list(string)
   description = "DNS server addresses that will be provided to VPN clients connected to this VPN server"
   default     = []
+  nullable    = false
 }
 
 variable "enable_split_tunneling" {

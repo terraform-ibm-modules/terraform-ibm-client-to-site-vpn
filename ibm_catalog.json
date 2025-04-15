@@ -102,21 +102,8 @@
               "required": true
             },
             {
-              "key": "provider_visibility",
-              "options": [
-                {
-                  "displayname": "private",
-                  "value": "private"
-                },
-                {
-                  "displayname": "public",
-                  "value": "public"
-                },
-                {
-                  "displayname": "public-and-private",
-                  "value": "public-and-private"
-                }
-              ]
+              "key": "vpn_name",
+              "required": true
             },
             {
               "key": "existing_resource_group_name",
@@ -143,9 +130,6 @@
               "key": "private_cert_engine_config_template_name"
             },
             {
-              "key": "vpn_name"
-            },
-            {
               "key": "remote_cidr"
             },
             {
@@ -155,7 +139,15 @@
               "key": "vpn_subnet_cidr_zone_2"
             },
             {
-              "key": "vpn_client_access_group_users"
+              "key": "vpn_client_access_group_users",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
               "key": "access_group_name"
@@ -164,7 +156,15 @@
               "key": "create_policy"
             },
             {
-              "key": "vpn_server_routes"
+              "key": "vpn_server_routes",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
               "key": "vpn_route_action"
@@ -182,10 +182,26 @@
               "key": "client_ip_pool"
             },
             {
-              "key": "client_dns_server_ips"
+              "key": "client_dns_server_ips",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
-              "key": "vpn_client_access_acl_ids"
+              "key": "vpn_client_access_acl_ids",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
               "key": "client_idle_timeout"
@@ -200,10 +216,43 @@
               "key": "existing_secrets_manager_secret_group_id"
             },
             {
-              "key": "existing_security_group_ids"
+              "key": "existing_security_group_ids",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
-              "key": "existing_subnet_ids"
+              "key": "existing_subnet_ids",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ]
             }
           ],
           "iam_permissions": [
