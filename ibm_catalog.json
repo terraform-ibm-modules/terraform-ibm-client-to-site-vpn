@@ -130,6 +130,28 @@
               "key": "private_cert_engine_config_template_name"
             },
             {
+              "key": "vpn_client_access_acl_ids",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "existing_subnet_ids",
+              "custom_config": {
+                "type": "array",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
               "key": "remote_cidr"
             },
             {
@@ -193,17 +215,6 @@
               }
             },
             {
-              "key": "vpn_client_access_acl_ids",
-              "custom_config": {
-                "type": "array",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "type": "string"
-                }
-              }
-            },
-            {
               "key": "client_idle_timeout"
             },
             {
@@ -217,17 +228,6 @@
             },
             {
               "key": "existing_security_group_ids",
-              "custom_config": {
-                "type": "array",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "key": "existing_subnet_ids",
               "custom_config": {
                 "type": "array",
                 "grouping": "deployment",
