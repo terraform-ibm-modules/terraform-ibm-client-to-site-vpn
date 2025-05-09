@@ -27,7 +27,7 @@ This solution supports provisioning and configuring the following infrastructure
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_client_to_site_sg"></a> [client\_to\_site\_sg](#module\_client\_to\_site\_sg) | terraform-ibm-modules/security-group/ibm | 2.6.2 |
+| <a name="module_client_to_site_sg"></a> [client\_to\_site\_sg](#module\_client\_to\_site\_sg) | terraform-ibm-modules/security-group/ibm | 2.7.0 |
 | <a name="module_existing_secrets_manager_cert_crn_parser"></a> [existing\_secrets\_manager\_cert\_crn\_parser](#module\_existing\_secrets\_manager\_cert\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_existing_sm_crn_parser"></a> [existing\_sm\_crn\_parser](#module\_existing\_sm\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |

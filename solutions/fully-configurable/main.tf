@@ -400,7 +400,7 @@ resource "time_sleep" "wait_for_security_group" {
 module "client_to_site_sg" {
   count                        = var.add_security_group ? 1 : 0
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.6.2"
+  version                      = "2.7.0"
   add_ibm_cloud_internal_rules = true
   vpc_id                       = local.existing_vpc_id
   resource_group               = module.resource_group.resource_group_id
