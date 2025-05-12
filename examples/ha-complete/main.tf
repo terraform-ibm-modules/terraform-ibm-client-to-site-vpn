@@ -144,4 +144,5 @@ module "vpn" {
   access_group_name             = "${var.prefix}-${var.access_group_name}"
   vpn_server_routes             = var.vpn_server_routes
   client_auth_methods           = "certificate"
+  client_cert_crns              = [module.secrets_manager_private_certificate.secret_crn]
 }

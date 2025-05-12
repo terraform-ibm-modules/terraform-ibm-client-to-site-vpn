@@ -226,6 +226,23 @@ variable "vpn_route_action" {
   nullable    = false
 }
 
+variable "client_cert_crns" {
+  type        = list(string)
+  description = "List of client CRN certificates used for VPN authentication."
+  default     = []
+  nullable    = false
+
+  validation {
+    condition     = var.client_auth_methods == "certificate" ? length(var.client_cert_crns) != 0 : true
+    error_message = "client_cert_crns must not be empty when client_auth_methods is set to 'certificate'."
+  }
+
+  validation {
+    condition     = alltrue([for crn in var.client_cert_crns : can(regex("^crn:(.*:){3}secrets-manager:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:secret:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$", crn))])
+    error_message = "One or more client CRN certificates in the 'client_cert_crns' input are invalid."
+  }
+}
+
 ##############################################################################
 # Provider
 ##############################################################################
