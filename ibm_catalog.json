@@ -130,6 +130,20 @@
               "key": "private_cert_engine_config_template_name"
             },
             {
+              "key": "client_auth_methods",
+              "options": [
+                {
+                  "displayname": "username",
+                  "value": "username"
+                },
+                {
+                  "displayname": "certificate",
+                  "value": "certificate"
+                }
+              ],
+              "hidden": true
+            },
+            {
               "key": "vpn_client_access_acl_ids",
               "custom_config": {
                 "type": "array",

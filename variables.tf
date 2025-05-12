@@ -30,12 +30,11 @@ variable "client_dns_server_ips" {
 
 variable "client_auth_methods" {
   type        = string
-  description = "Client authentication method"
+  description = "The methods used to authenticate VPN clients to this VPN server. Allowable values are: certificate, username. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
   default     = "username"
   validation {
-    error_message = "Only authentication by username is supported."
-    condition = can(contains(["username"], var.client_auth_methods)
-    )
+    error_message = "Allowed values are username and certificate."
+    condition     = contains(["username", "certificate"], var.client_auth_methods)
   }
 }
 

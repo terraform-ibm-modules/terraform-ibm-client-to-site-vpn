@@ -61,6 +61,7 @@ resource "ibm_is_vpn_server" "vpn" {
   client_authentication {
     method            = var.client_auth_methods
     identity_provider = var.client_auth_methods == "username" ? "iam" : null
+    client_ca_crn     = var.client_auth_methods == "certificate" ? var.server_cert_crn : null
   }
   client_idle_timeout    = var.client_idle_timeout
   client_ip_pool         = var.client_ip_pool

@@ -94,6 +94,16 @@ variable "vpn_name" {
   nullable    = false
 }
 
+variable "client_auth_methods" {
+  type        = string
+  description = "The methods used to authenticate VPN clients to this VPN server. Allowable values are: certificate, username. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
+  default     = "username"
+  validation {
+    error_message = "Allowed values are username and certificate."
+    condition     = contains(["username", "certificate"], var.client_auth_methods)
+  }
+}
+
 variable "vpn_subnet_cidr_zone_1" {
   type        = string
   description = "The CIDR range to use for subnet creation from the first zone in the region (or zone specified in the 'vpn_zone_1' input variable). Ensure it's not conflicting with any existing subnets. Must be set if 'existing_subnet_ids' input variable is not set."
