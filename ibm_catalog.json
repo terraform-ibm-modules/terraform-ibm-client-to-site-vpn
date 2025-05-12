@@ -133,7 +133,7 @@
               "key": "client_auth_methods",
               "options": [
                 {
-                  "displayname": "username",
+                  "displayname": "IAM username",
                   "value": "username"
                 },
                 {
