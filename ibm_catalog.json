@@ -140,8 +140,7 @@
                   "displayname": "certificate",
                   "value": "certificate"
                 }
-              ],
-              "hidden": true
+              ]
             },
             {
               "key": "vpn_client_access_acl_ids",
