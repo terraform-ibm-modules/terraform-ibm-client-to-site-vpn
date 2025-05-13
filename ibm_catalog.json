@@ -109,12 +109,12 @@
               "key": "existing_resource_group_name",
               "required": true,
               "custom_config": {
-                  "type": "resource_group",
-                  "grouping": "deployment",
-                  "original_grouping": "deployment",
-                  "config_constraints": {
-                      "identifier": "rg_name"
-                  }
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "rg_name"
+                }
               }
             },
             {
@@ -271,7 +271,6 @@
             }
           ],
           "architecture": {
-            "descriptions": "",
             "features": [
               {
                 "title": "Supports OpenVPN Clients",
