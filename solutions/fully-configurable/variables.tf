@@ -95,12 +95,16 @@ variable "vpn_name" {
 }
 
 variable "client_auth_methods" {
-  type        = string
+  type        = list(string)
   description = "The methods used to authenticate VPN clients to this VPN server. Allowable values are: certificate, username. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
-  default     = "username"
+  default     = ["username"]
   validation {
     error_message = "Allowed values are username and certificate."
-    condition     = contains(["username", "certificate"], var.client_auth_methods)
+    condition     = alltrue([for method in var.client_auth_methods : contains(["username", "certificate"], method)])
+  }
+  validation {
+    error_message = "Each value (username or certificate) may appear at most once (no duplicates allowed)"
+    condition     = length(var.client_auth_methods) == length(distinct(var.client_auth_methods))
   }
 }
 
@@ -233,8 +237,8 @@ variable "client_cert_crns" {
   nullable    = false
 
   validation {
-    condition     = var.client_auth_methods == "certificate" ? length(var.client_cert_crns) != 0 : true
-    error_message = "client_cert_crns must not be empty when client_auth_methods is set to 'certificate'."
+    condition     = anytrue([for method in var.client_auth_methods : method == "certificate"]) ? length(var.client_cert_crns) != 0 : true
+    error_message = "client_cert_crns must not be empty when client_auth_methods includes 'certificate'."
   }
 
   validation {
