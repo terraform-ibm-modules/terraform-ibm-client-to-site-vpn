@@ -130,17 +130,7 @@
               "key": "private_cert_engine_config_template_name"
             },
             {
-              "key": "client_auth_methods",
-              "options": [
-                {
-                  "displayname": "IAM username",
-                  "value": "username"
-                },
-                {
-                  "displayname": "certificate",
-                  "value": "certificate"
-                }
-              ]
+              "key": "client_auth_methods"
             },
              {
               "key": "client_cert_crns"
