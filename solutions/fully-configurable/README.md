@@ -33,7 +33,7 @@ This solution supports provisioning and configuring the following infrastructure
 | <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.2.0 |
 | <a name="module_secrets_manager_private_certificate"></a> [secrets\_manager\_private\_certificate](#module\_secrets\_manager\_private\_certificate) | terraform-ibm-modules/secrets-manager-private-cert/ibm | 1.3.3 |
-| <a name="module_secrets_manager_secret_group"></a> [secrets\_manager\_secret\_group](#module\_secrets\_manager\_secret\_group) | terraform-ibm-modules/secrets-manager-secret-group/ibm | 1.3.4 |
+| <a name="module_secrets_manager_secret_group"></a> [secrets\_manager\_secret\_group](#module\_secrets\_manager\_secret\_group) | terraform-ibm-modules/secrets-manager-secret-group/ibm | 1.3.5 |
 | <a name="module_vpn"></a> [vpn](#module\_vpn) | ../.. | n/a |
 
 ### Resources
