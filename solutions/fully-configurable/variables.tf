@@ -94,6 +94,20 @@ variable "vpn_name" {
   nullable    = false
 }
 
+variable "client_auth_methods" {
+  type        = list(string)
+  description = "The methods used to authenticate VPN clients to this VPN server. Allowable values are: certificate, username. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
+  default     = ["username"]
+  validation {
+    error_message = "Allowed values are username and certificate."
+    condition     = alltrue([for method in var.client_auth_methods : contains(["username", "certificate"], method)])
+  }
+  validation {
+    error_message = "Each value (username or certificate) may appear at most once (no duplicates allowed)"
+    condition     = length(var.client_auth_methods) == length(distinct(var.client_auth_methods))
+  }
+}
+
 variable "vpn_subnet_cidr_zone_1" {
   type        = string
   description = "The CIDR range to use for subnet creation from the first zone in the region (or zone specified in the 'vpn_zone_1' input variable). Ensure it's not conflicting with any existing subnets. Must be set if 'existing_subnet_ids' input variable is not set."
@@ -214,6 +228,23 @@ variable "vpn_route_action" {
   description = "The action to perform with a packet matching the VPN route. The same action will be applied to all routes."
   default     = "deliver"
   nullable    = false
+}
+
+variable "client_cert_crns" {
+  type        = list(string)
+  description = "List of client CRN certificates used for VPN authentication."
+  default     = []
+  nullable    = false
+
+  validation {
+    condition     = anytrue([for method in var.client_auth_methods : method == "certificate"]) ? length(var.client_cert_crns) != 0 : true
+    error_message = "client_cert_crns must not be empty when client_auth_methods includes 'certificate'."
+  }
+
+  validation {
+    condition     = alltrue([for crn in var.client_cert_crns : can(regex("^crn:(.*:){3}secrets-manager:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:secret:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$", crn))])
+    error_message = "One or more client CRN certificates in the 'client_cert_crns' input are invalid."
+  }
 }
 
 ##############################################################################

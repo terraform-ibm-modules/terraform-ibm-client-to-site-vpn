@@ -9,3 +9,4 @@ This example will:
 - Create a new private cert and place it in a secret in the newly created secret group.
 - Create a new VPC in the resource group and region provided.
 - Create a high availability VPN server (spanning 2 subnets in different zones)
+- Configure the VPN server to use certificate-based authentication

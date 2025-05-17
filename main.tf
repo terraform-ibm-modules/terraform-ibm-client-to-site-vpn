@@ -55,12 +55,39 @@ resource "ibm_iam_access_group_members" "cts_vpn_access_group_users" {
   ibm_ids         = var.vpn_client_access_group_users
 }
 
+locals {
+  # create a new list for a client authentication:
+  # - if username is used then we set the iam identity provider
+  # - if certificate is used then we set client_ca_crn for all client certificates
+  client_authentications = flatten([
+    for method in sort(var.client_auth_methods) : (
+      method == "certificate" ? [
+        for cert in sort(var.client_cert_crns) : {
+          method            = method
+          identity_provider = null
+          client_ca_crn     = cert
+        }
+        ] : method == "username" ? [
+        {
+          method            = method
+          identity_provider = "iam"
+          client_ca_crn     = null
+        }
+      ] : []
+    )
+  ])
+}
+
 # Client to Site VPN
 resource "ibm_is_vpn_server" "vpn" {
   certificate_crn = var.server_cert_crn
-  client_authentication {
-    method            = var.client_auth_methods
-    identity_provider = var.client_auth_methods == "username" ? "iam" : null
+  dynamic "client_authentication" {
+    for_each = local.client_authentications
+    content {
+      method            = client_authentication.value.method
+      identity_provider = client_authentication.value.identity_provider
+      client_ca_crn     = client_authentication.value.client_ca_crn
+    }
   }
   client_idle_timeout    = var.client_idle_timeout
   client_ip_pool         = var.client_ip_pool

@@ -29,13 +29,16 @@ variable "client_dns_server_ips" {
 }
 
 variable "client_auth_methods" {
-  type        = string
-  description = "Client authentication method"
-  default     = "username"
+  type        = list(string)
+  description = "The methods used to authenticate VPN clients to this VPN server. Allowable values are: certificate, username. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
+  default     = ["username"]
   validation {
-    error_message = "Only authentication by username is supported."
-    condition = can(contains(["username"], var.client_auth_methods)
-    )
+    error_message = "Allowed values are username and certificate."
+    condition     = alltrue([for method in var.client_auth_methods : contains(["username", "certificate"], method)])
+  }
+  validation {
+    error_message = "Each value (username or certificate) may appear at most once (no duplicates allowed)"
+    condition     = length(var.client_auth_methods) == length(distinct(var.client_auth_methods))
   }
 }
 
@@ -57,6 +60,23 @@ variable "subnet_ids" {
 variable "server_cert_crn" {
   type        = string
   description = "CRN of a secret in Secrets Manager that contains the certificate to use for the VPN"
+}
+
+variable "client_cert_crns" {
+  type        = list(string)
+  description = "List of client CRN certificates used for VPN authentication."
+  default     = []
+  nullable    = false
+
+  validation {
+    condition     = anytrue([for method in var.client_auth_methods : method == "certificate"]) ? length(var.client_cert_crns) != 0 : true
+    error_message = "client_cert_crns must not be empty when client_auth_methods includes 'certificate'."
+  }
+
+  validation {
+    condition     = alltrue([for crn in var.client_cert_crns : can(regex("^crn:(.*:){3}secrets-manager:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:secret:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$", crn))])
+    error_message = "One or more client CRN certificates in the 'client_cert_crns' input are invalid."
+  }
 }
 
 variable "enable_split_tunneling" {

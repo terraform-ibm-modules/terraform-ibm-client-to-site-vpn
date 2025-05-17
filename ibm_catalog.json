@@ -130,6 +130,12 @@
               "key": "private_cert_engine_config_template_name"
             },
             {
+              "key": "client_auth_methods"
+            },
+             {
+              "key": "client_cert_crns"
+            },
+            {
               "key": "vpn_client_access_acl_ids",
               "custom_config": {
                 "type": "array",
