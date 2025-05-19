@@ -28,15 +28,16 @@ variable "client_dns_server_ips" {
   default     = []
 }
 
-variable "client_auth_methods" {
-  type        = string
-  description = "Client authentication method"
-  default     = "username"
-  validation {
-    error_message = "Only authentication by username is supported."
-    condition = can(contains(["username"], var.client_auth_methods)
-    )
-  }
+variable "enable_username_auth" {
+  type        = bool
+  description = "Set to true to use IAM usernames for client authentication to this VPN server. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
+  default     = true
+}
+
+variable "enable_certificate_auth" {
+  type        = bool
+  description = "Set to true to enable client certificate authentication for this VPN server. You must specify certificates using the client_cert_crns input variable. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
+  default     = false
 }
 
 variable "client_idle_timeout" {
@@ -57,6 +58,23 @@ variable "subnet_ids" {
 variable "server_cert_crn" {
   type        = string
   description = "CRN of a secret in Secrets Manager that contains the certificate to use for the VPN"
+}
+
+variable "client_cert_crns" {
+  type        = list(string)
+  description = "List of client CRN certificates used for VPN authentication. Must not be empty if enable_certificate_auth is true."
+  default     = []
+  nullable    = false
+
+  validation {
+    condition     = var.enable_certificate_auth ? length(var.client_cert_crns) != 0 : true
+    error_message = "client_cert_crns must not be empty when enable_certificate_auth is set to true."
+  }
+
+  validation {
+    condition     = alltrue([for crn in var.client_cert_crns : can(regex("^crn:(.*:){3}secrets-manager:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:secret:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$", crn))])
+    error_message = "One or more client CRN certificates in the 'client_cert_crns' input are invalid."
+  }
 }
 
 variable "enable_split_tunneling" {

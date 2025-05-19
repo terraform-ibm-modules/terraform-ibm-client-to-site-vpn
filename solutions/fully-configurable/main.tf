@@ -387,6 +387,9 @@ module "vpn" {
   client_dns_server_ips         = var.client_dns_server_ips
   client_idle_timeout           = var.client_idle_timeout
   enable_split_tunneling        = var.enable_split_tunneling
+  enable_username_auth          = var.enable_username_auth
+  enable_certificate_auth       = var.enable_certificate_auth
+  client_cert_crns              = var.client_cert_crns
 }
 
 # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/issues/45
