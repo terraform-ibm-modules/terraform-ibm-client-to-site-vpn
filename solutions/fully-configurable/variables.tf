@@ -230,7 +230,7 @@ variable "vpn_route_action" {
 
 variable "client_cert_crns" {
   type        = list(string)
-  description = "List of client CRN certificates used for VPN authentication."
+  description = "List of client CRN certificates used for VPN authentication. Must not be empty if enable_certificate_auth is true."
   default     = []
   nullable    = false
 
