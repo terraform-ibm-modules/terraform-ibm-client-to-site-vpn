@@ -102,7 +102,7 @@ variable "enable_username_auth" {
 
 variable "enable_certificate_auth" {
   type        = bool
-  description = "Set to true to enable client certificate authentication for this VPN server. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
+  description = "Set to true to enable client certificate authentication for this VPN server. You must specify certificates using the client_cert_crns input variable. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
   default     = false
 }
 
