@@ -130,9 +130,12 @@
               "key": "private_cert_engine_config_template_name"
             },
             {
-              "key": "client_auth_methods"
+              "key": "enable_username_auth"
             },
-             {
+            {
+              "key": "enable_certificate_auth"
+            },
+            {
               "key": "client_cert_crns"
             },
             {

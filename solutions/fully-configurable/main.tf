@@ -387,7 +387,8 @@ module "vpn" {
   client_dns_server_ips         = var.client_dns_server_ips
   client_idle_timeout           = var.client_idle_timeout
   enable_split_tunneling        = var.enable_split_tunneling
-  client_auth_methods           = var.client_auth_methods
+  enable_username_auth          = var.enable_username_auth
+  enable_certificate_auth       = var.enable_certificate_auth
   client_cert_crns              = var.client_cert_crns
 }
 

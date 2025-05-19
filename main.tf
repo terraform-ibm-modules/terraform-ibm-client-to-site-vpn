@@ -57,25 +57,23 @@ resource "ibm_iam_access_group_members" "cts_vpn_access_group_users" {
 
 locals {
   # create a new list for a client authentication:
-  # - if username is used then we set the iam identity provider
-  # - if certificate is used then we set client_ca_crn for all client certificates
-  client_authentications = flatten([
-    for method in sort(var.client_auth_methods) : (
-      method == "certificate" ? [
-        for cert in sort(var.client_cert_crns) : {
-          method            = method
-          identity_provider = null
-          client_ca_crn     = cert
-        }
-        ] : method == "username" ? [
-        {
-          method            = method
-          identity_provider = "iam"
-          client_ca_crn     = null
-        }
-      ] : []
-    )
-  ])
+  # - if enable_certificate_auth is set to true then we set the iam identity provider
+  # - if enable_username_auth is set to true then we set client_ca_crn for all client certificates
+  ca_cert = var.enable_certificate_auth ? [
+    for cert in sort(var.client_cert_crns) : {
+      method            = "certificate"
+      identity_provider = null
+      client_ca_crn     = cert
+    }
+  ] : []
+  ca_username = var.enable_username_auth ? [
+    {
+      method            = "username"
+      identity_provider = "iam"
+      client_ca_crn     = null
+    }
+  ] : []
+  client_authentications = concat(local.ca_cert, local.ca_username)
 }
 
 # Client to Site VPN

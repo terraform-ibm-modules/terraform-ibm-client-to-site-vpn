@@ -94,18 +94,16 @@ variable "vpn_name" {
   nullable    = false
 }
 
-variable "client_auth_methods" {
-  type        = list(string)
-  description = "The methods used to authenticate VPN clients to this VPN server. Allowable values are: certificate, username. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
-  default     = ["username"]
-  validation {
-    error_message = "Allowed values are username and certificate."
-    condition     = alltrue([for method in var.client_auth_methods : contains(["username", "certificate"], method)])
-  }
-  validation {
-    error_message = "Each value (username or certificate) may appear at most once (no duplicates allowed)"
-    condition     = length(var.client_auth_methods) == length(distinct(var.client_auth_methods))
-  }
+variable "enable_username_auth" {
+  type        = bool
+  description = "Set to true to use IAM usernames for client authentication to this VPN server. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
+  default     = true
+}
+
+variable "enable_certificate_auth" {
+  type        = bool
+  description = "Set to true to enable client certificate authentication for this VPN server. For more information, see https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-environment-setup"
+  default     = false
 }
 
 variable "vpn_subnet_cidr_zone_1" {
@@ -237,8 +235,8 @@ variable "client_cert_crns" {
   nullable    = false
 
   validation {
-    condition     = anytrue([for method in var.client_auth_methods : method == "certificate"]) ? length(var.client_cert_crns) != 0 : true
-    error_message = "client_cert_crns must not be empty when client_auth_methods includes 'certificate'."
+    condition     = var.enable_certificate_auth ? length(var.client_cert_crns) != 0 : true
+    error_message = "client_cert_crns must not be empty when enable_certificate_auth is set to true."
   }
 
   validation {
