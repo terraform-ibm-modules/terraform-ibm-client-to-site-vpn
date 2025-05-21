@@ -90,6 +90,16 @@ variable "existing_security_group_ids" {
   nullable    = false
 }
 
+variable "protocol" {
+  description = "The transport protocol to use for this VPN server. Allowable values are: udp, tcp"
+  type        = string
+  default     = "udp"
+  validation {
+    condition     = contains(["tcp", "udp"], var.protocol)
+    error_message = "Protocol must be either 'tcp' or 'udp'."
+  }
+}
+
 ##############################################################################
 # Auth related variables
 ##############################################################################
