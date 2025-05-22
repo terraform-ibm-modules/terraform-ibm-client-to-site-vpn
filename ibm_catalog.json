@@ -230,7 +230,17 @@
               "key": "enable_split_tunneling"
             },
             {
-              "key": "protocol"
+              "key": "protocol",
+              "options": [
+                {
+                  "displayname": "udp",
+                  "value": "udp"
+                },
+                {
+                  "displayname": "tcp",
+                  "value": "tcp"
+                }
+              ]
             },
             {
               "key": "add_security_group"
