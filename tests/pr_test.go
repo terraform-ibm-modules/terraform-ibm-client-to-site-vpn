@@ -154,6 +154,7 @@ func TestFullyConfigurableSolutionInSchematics(t *testing.T) {
 			{Name: "vpn_subnet_cidr_zone_1", Value: "10.10.40.0/24", DataType: "string"},
 			{Name: "vpn_subnet_cidr_zone_2", Value: "10.10.80.0/24", DataType: "string"},
 			{Name: "vpn_client_access_acl_ids", Value: []string{terraform.Output(t, existingTerraformOptions, "default_network_acl_id")}, DataType: "list(string)"},
+			{Name: "protocol", Value: "tcp", DataType: "string"},
 		}
 		err := options.RunSchematicTest()
 		assert.Nil(t, err, "This should not have errored")
