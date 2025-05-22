@@ -95,6 +95,7 @@ resource "ibm_is_vpn_server" "vpn" {
   subnets                = local.subnet_ids
   resource_group         = var.resource_group_id
   security_groups        = length(var.existing_security_group_ids) > 0 ? var.existing_security_group_ids : null
+  protocol               = var.protocol
 }
 
 resource "ibm_is_vpn_server_route" "server_route" {
