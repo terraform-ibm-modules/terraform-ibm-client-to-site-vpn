@@ -372,25 +372,26 @@ resource "ibm_is_network_acl_rule" "inbound_acl_rules_subnet1" {
 ##############################################################################
 
 module "vpn" {
-  source                        = "../.."
-  depends_on                    = [time_sleep.wait_for_security_group]
-  server_cert_crn               = local.secrets_manager_cert_crn
-  vpn_gateway_name              = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.vpn_name}" : var.vpn_name
-  resource_group_id             = module.resource_group.resource_group_id
-  subnet_ids                    = local.subnet_ids
-  create_policy                 = var.create_policy
-  vpn_client_access_group_users = var.vpn_client_access_group_users
-  access_group_name             = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.access_group_name}" : var.access_group_name
-  vpn_server_routes             = local.vpn_server_routes
-  existing_security_group_ids   = var.existing_security_group_ids
-  client_ip_pool                = var.client_ip_pool
-  client_dns_server_ips         = var.client_dns_server_ips
-  client_idle_timeout           = var.client_idle_timeout
-  enable_split_tunneling        = var.enable_split_tunneling
-  enable_username_auth          = var.enable_username_auth
-  enable_certificate_auth       = var.enable_certificate_auth
-  client_cert_crns              = var.client_cert_crns
-  protocol                      = var.protocol
+  source                               = "../.."
+  depends_on                           = [time_sleep.wait_for_security_group]
+  server_cert_crn                      = local.secrets_manager_cert_crn
+  vpn_gateway_name                     = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.vpn_name}" : var.vpn_name
+  resource_group_id                    = module.resource_group.resource_group_id
+  subnet_ids                           = local.subnet_ids
+  create_policy                        = var.create_policy
+  vpn_client_access_group_users        = var.vpn_client_access_group_users
+  access_group_name                    = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.access_group_name}" : var.access_group_name
+  vpn_server_routes                    = local.vpn_server_routes
+  existing_security_group_ids          = var.existing_security_group_ids
+  client_ip_pool                       = var.client_ip_pool
+  client_dns_server_ips                = var.client_dns_server_ips
+  client_idle_timeout                  = var.client_idle_timeout
+  enable_split_tunneling               = var.enable_split_tunneling
+  enable_username_auth                 = var.enable_username_auth
+  enable_certificate_auth              = var.enable_certificate_auth
+  client_cert_crns                     = var.client_cert_crns
+  protocol                             = var.protocol
+  skip_secrets_manager_iam_auth_policy = var.skip_secrets_manager_iam_auth_policy
 }
 
 # workaround for https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/issues/45

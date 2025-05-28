@@ -83,6 +83,12 @@ variable "client_idle_timeout" {
   default     = 1800
 }
 
+variable "skip_secrets_manager_iam_auth_policy" {
+  type        = bool
+  description = "Specifies whether to create an IAM authorization policy with the SecretsReader role, allowing communication between all VPN servers (scoped to the specified resource group) and the given Secrets Manager instance. Currently, it is not possible to scope the policy to the exact VPN server ID, as the policy must be created before the instance exists. This is because the policy uses the certificate stored in Secrets Manager during the provisioning process."
+  default     = false
+}
+
 ##############################################################################
 # client-to-site VPN
 ##############################################################################

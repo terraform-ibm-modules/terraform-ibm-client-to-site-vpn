@@ -230,6 +230,9 @@
               "key": "enable_split_tunneling"
             },
             {
+              "key": "skip_secrets_manager_iam_auth_policy"
+            },
+            {
               "key": "protocol",
               "options": [
                 {
