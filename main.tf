@@ -8,15 +8,44 @@ locals {
 # More info: https://cloud.ibm.com/docs/vpc?topic=vpc-client-to-site-authentication#creating-iam-service-to-service
 # NOTE: The auth policy cannot be scoped to the exact VPN server instance ID because the VPN can't be provisioned
 # without the cert from secrets manager, but it cant grab the cert from secrets manager until the policy is created.
+
+data "ibm_iam_account_settings" "iam_account_settings" {
+}
+
 resource "ibm_iam_authorization_policy" "policy" {
-  count                       = var.skip_secrets_manager_iam_auth_policy ? 0 : 1
-  source_service_name         = "is"
-  source_resource_type        = "vpn-server"
-  source_resource_group_id    = var.resource_group_id
-  target_service_name         = "secrets-manager"
-  target_resource_instance_id = module.sm_crn_parser.service_instance
-  roles                       = ["SecretsReader"]
-  description                 = "Allow all VPN server instances in the resource group ${var.resource_group_id} to read from the Secrets Manager instance with ID ${module.sm_crn_parser.service_instance}"
+  count                    = var.skip_secrets_manager_iam_auth_policy ? 0 : 1
+  source_service_name      = "is"
+  source_resource_type     = "vpn-server"
+  source_resource_group_id = var.resource_group_id
+  #  target_service_name         = "secrets-manager"
+  #  target_resource_instance_id = module.sm_crn_parser.service_instance
+  roles = ["SecretsReader"]
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = "secrets-manager"
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = data.ibm_iam_account_settings.iam_account_settings.account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = module.sm_crn_parser.service_instance
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "secret"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = var.server_cert_crn
+  }
+  description = "Allow all VPN server instances in the resource group ${var.resource_group_id} to read Secret ${var.server_cert_crn} from the Secrets Manager instance with ID ${module.sm_crn_parser.service_instance}"
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478

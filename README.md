@@ -104,6 +104,7 @@ You need the following permissions to run this module.
 | [ibm_is_vpn_server.vpn](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/is_vpn_server) | resource |
 | [ibm_is_vpn_server_route.server_route](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/is_vpn_server_route) | resource |
 | [time_sleep.wait_for_authorization_policy](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
+| [ibm_iam_account_settings.iam_account_settings](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/data-sources/iam_account_settings) | data source |
 
 ### Inputs
 
