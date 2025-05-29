@@ -45,7 +45,7 @@ resource "ibm_iam_authorization_policy" "policy" {
     operator = "stringEquals"
     value    = var.server_cert_crn
   }
-  description = "Allow all VPN server instances in the resource group ${var.resource_group_id} to read Secret ${var.server_cert_crn} from the Secrets Manager instance with ID ${module.sm_crn_parser.service_instance}"
+  description = "Allow all VPN server instances in the resource group ${var.resource_group_id} to read Secret ${var.server_cert_crn}."
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
