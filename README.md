@@ -91,7 +91,7 @@ You need the following permissions to run this module.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_sm_crn_parser"></a> [sm\_crn\_parser](#module\_sm\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
+| <a name="module_sm_crn_parser"></a> [sm\_crn\_parser](#module\_sm\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
 
 ### Resources
 
