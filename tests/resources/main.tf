@@ -4,7 +4,7 @@
 
 module "landing_zone" {
   source                 = "terraform-ibm-modules/landing-zone/ibm//patterns//vpc//module"
-  version                = "8.1.0"
+  version                = "8.2.0"
   region                 = var.region
   prefix                 = var.prefix
   tags                   = var.resource_tags
@@ -17,7 +17,7 @@ module "landing_zone" {
 ################################################################################
 module "resource_group" {
   source              = "terraform-ibm-modules/resource-group/ibm"
-  version             = "1.2.0"
+  version             = "1.2.1"
   resource_group_name = "${var.prefix}-rg"
 }
 
@@ -33,7 +33,7 @@ locals {
 module "existing_sm_crn_parser" {
   count   = var.existing_secrets_manager_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.1.0"
+  version = "1.2.0"
   crn     = var.existing_secrets_manager_instance_crn
 }
 
