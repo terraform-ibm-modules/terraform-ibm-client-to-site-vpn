@@ -5,11 +5,12 @@
       "label": "Cloud automation for Client to Site VPN",
       "product_kind": "solution",
       "tags": [
-        "network",
         "ibm_created",
         "target_terraform",
         "terraform",
-        "solution"
+        "solution",
+        "network",
+        "converged_infra"
       ],
       "keywords": [
         "IaC",
