@@ -345,7 +345,8 @@
                 "description": "Client-to-site VPN configuration for accessing a landing zone."
               }
             ]
-          }
+          },
+          "terraform_version": "1.10.5"
         }
       ]
     }
