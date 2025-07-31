@@ -51,9 +51,6 @@ Once Client to Site VPN is deployed with access groups, follow these steps:
 
 For more information about the current VPN server limitations, see [VPN server limitations](https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-client-vpn-limitations&interface=ui).
 
-#### Deployable architecture extension
-See [Client-To-Site VPN add-on for landing zone](extensions/landing-zone)
-
 ### Usage
 
 ```hcl
