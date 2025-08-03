@@ -20,7 +20,7 @@ This solution supports provisioning and configuring the following infrastructure
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.80.4 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.81.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | 0.13.1 |
 
 ### Modules
@@ -31,26 +31,26 @@ This solution supports provisioning and configuring the following infrastructure
 | <a name="module_existing_secrets_manager_cert_crn_parser"></a> [existing\_secrets\_manager\_cert\_crn\_parser](#module\_existing\_secrets\_manager\_cert\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
 | <a name="module_existing_sm_crn_parser"></a> [existing\_sm\_crn\_parser](#module\_existing\_sm\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
 | <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
-| <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.2.1 |
-| <a name="module_secrets_manager_private_certificate"></a> [secrets\_manager\_private\_certificate](#module\_secrets\_manager\_private\_certificate) | terraform-ibm-modules/secrets-manager-private-cert/ibm | 1.4.1 |
-| <a name="module_secrets_manager_secret_group"></a> [secrets\_manager\_secret\_group](#module\_secrets\_manager\_secret\_group) | terraform-ibm-modules/secrets-manager-secret-group/ibm | 1.3.11 |
+| <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.3.0 |
+| <a name="module_secrets_manager_private_certificate"></a> [secrets\_manager\_private\_certificate](#module\_secrets\_manager\_private\_certificate) | terraform-ibm-modules/secrets-manager-private-cert/ibm | 1.4.3 |
+| <a name="module_secrets_manager_secret_group"></a> [secrets\_manager\_secret\_group](#module\_secrets\_manager\_secret\_group) | terraform-ibm-modules/secrets-manager-secret-group/ibm | 1.3.12 |
 | <a name="module_vpn"></a> [vpn](#module\_vpn) | ../.. | n/a |
 
 ### Resources
 
 | Name | Type |
 |------|------|
-| [ibm_is_network_acl.client_to_site_vpn_acl](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/resources/is_network_acl) | resource |
-| [ibm_is_network_acl_rule.inbound_acl_rules_subnet1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/resources/is_network_acl_rule) | resource |
-| [ibm_is_network_acl_rule.outbound_acl_rules_subnet1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/resources/is_network_acl_rule) | resource |
-| [ibm_is_security_group_target.sg_target](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/resources/is_security_group_target) | resource |
-| [ibm_is_subnet.client_to_site_subnet_zone_1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/resources/is_subnet) | resource |
-| [ibm_is_subnet.client_to_site_subnet_zone_2](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/resources/is_subnet) | resource |
-| [ibm_is_vpc_address_prefix.client_to_site_address_prefixes_zone_1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/resources/is_vpc_address_prefix) | resource |
-| [ibm_is_vpc_address_prefix.client_to_site_address_prefixes_zone_2](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/resources/is_vpc_address_prefix) | resource |
+| [ibm_is_network_acl.client_to_site_vpn_acl](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/resources/is_network_acl) | resource |
+| [ibm_is_network_acl_rule.inbound_acl_rules_subnet1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/resources/is_network_acl_rule) | resource |
+| [ibm_is_network_acl_rule.outbound_acl_rules_subnet1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/resources/is_network_acl_rule) | resource |
+| [ibm_is_security_group_target.sg_target](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/resources/is_security_group_target) | resource |
+| [ibm_is_subnet.client_to_site_subnet_zone_1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/resources/is_subnet) | resource |
+| [ibm_is_subnet.client_to_site_subnet_zone_2](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/resources/is_subnet) | resource |
+| [ibm_is_vpc_address_prefix.client_to_site_address_prefixes_zone_1](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/resources/is_vpc_address_prefix) | resource |
+| [ibm_is_vpc_address_prefix.client_to_site_address_prefixes_zone_2](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/resources/is_vpc_address_prefix) | resource |
 | [time_sleep.wait_for_security_group](https://registry.terraform.io/providers/hashicorp/time/0.13.1/docs/resources/sleep) | resource |
-| [ibm_is_network_acl.existing_acls](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/data-sources/is_network_acl) | data source |
-| [ibm_is_subnet.existing_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.80.4/docs/data-sources/is_subnet) | data source |
+| [ibm_is_network_acl.existing_acls](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/data-sources/is_network_acl) | data source |
+| [ibm_is_subnet.existing_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.81.0/docs/data-sources/is_subnet) | data source |
 
 ### Inputs
 
