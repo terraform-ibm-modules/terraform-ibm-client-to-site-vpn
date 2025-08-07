@@ -199,12 +199,12 @@ locals {
   ##############################################################################
 
   security_group_rule = [{
-    name      = replace(replace("allow-${var.remote_cidr}-inbound", ".", "-"), "/", "-")
+    name      = replace("allow-${var.remote_cidr}-inbound", "/\\.|\\//", "-")
     direction = "inbound"
     remote    = var.remote_cidr
     },
     {
-      name      = replace(replace("allow-${var.remote_cidr}-outbound", ".", "-"), "/", "-")
+      name      = replace("allow-${var.remote_cidr}-outbound", "/\\.|\\//", "-")
       direction = "outbound"
       remote    = var.remote_cidr
   }]
