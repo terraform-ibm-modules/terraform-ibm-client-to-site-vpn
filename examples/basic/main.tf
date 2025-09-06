@@ -50,7 +50,7 @@ module "secrets_manager_private_certificate" {
 # Minimal VPC for illustration purpose: 1 subnet across 1 availability zone
 module "basic_vpc" {
   source               = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version              = "8.0.0"
+  version              = "8.2.1"
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   name                 = "vpc"
