@@ -109,7 +109,6 @@
             },
             {
               "key": "existing_resource_group_name",
-              "required": true,
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
