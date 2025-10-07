@@ -6,11 +6,28 @@ variable "ibmcloud_api_key" {
 
 variable "prefix" {
   type        = string
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). Must begin with a letter and contain only lowercase letters, numbers, and - characters. To not use any prefix value, you can set this value to `null` or an empty string."
+  nullable    = true
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to `null` or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
 
   validation {
-    error_message = "Prefix must begin with a letter and contain only lowercase letters, numbers, and - characters."
-    condition     = var.prefix == null || var.prefix == "" ? true : can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
+    # - null and empty string is allowed
+    # - Must not contain consecutive hyphens (--): length(regexall("--", var.prefix)) == 0
+    # - Starts with a lowercase letter: [a-z]
+    # - Contains only lowercase letters (a–z), digits (0–9), and hyphens (-)
+    # - Must not end with a hyphen (-): [a-z0-9]
+    condition = (var.prefix == null || var.prefix == "" ? true :
+      alltrue([
+        can(regex("^[a-z][-a-z0-9]*[a-z0-9]$", var.prefix)),
+        length(regexall("--", var.prefix)) == 0
+      ])
+    )
+    error_message = "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--')."
+  }
+
+  validation {
+    # must not exceed 16 characters in length
+    condition     = var.prefix == null || var.prefix == "" ? true : length(var.prefix) <= 16
+    error_message = "Prefix must not exceed 16 characters."
   }
 }
 
@@ -26,13 +43,13 @@ variable "existing_resource_group_name" {
 
 variable "existing_secrets_manager_instance_crn" {
   type        = string
-  description = "The CRN of existing secrets manager where the certificate to use for the VPN is stored or where the new private certificate will be created."
+  description = "The CRN of existing secrets manager where the certificate to use for the VPN is stored or where the new private certificate will be created. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-getting-started)"
   default     = null
 }
 
 variable "existing_secrets_manager_cert_crn" {
   type        = string
-  description = "The CRN of existing secrets manager private certificate to use to create VPN. If the value is null, then new private certificate is created."
+  description = "The CRN of existing secrets manager private certificate to use to create VPN. If the value is null, then new private certificate is created. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-certificates&interface=ui)"
   default     = null
 
   validation {
@@ -48,19 +65,19 @@ variable "existing_secrets_manager_cert_crn" {
 
 variable "existing_secrets_manager_secret_group_id" {
   type        = string
-  description = "The ID of existing secrets manager secret group used for new created certificate. If the value is null, then new secrets manager secret group is created."
+  description = "The ID of existing secrets manager secret group used for new created certificate. If the value is null, then new secrets manager secret group is created. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-secret-groups&interface=ui)"
   default     = null
 }
 
 variable "private_cert_engine_config_root_ca_common_name" {
   type        = string
-  description = "A fully qualified domain name or host domain name for the certificate to be created. Only used when `existing_secrets_manager_cert_crn` input variable is `null`."
+  description = "A fully qualified domain name or host domain name for the certificate to be created. Only used when `existing_secrets_manager_cert_crn` input variable is `null`. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-private-certificates&interface=ui)"
   default     = null
 }
 
 variable "private_cert_engine_config_template_name" {
   type        = string
-  description = "The name of the Certificate Template to create for a private certificate secret engine. When `existing_secrets_manager_cert_crn` input variable is `null`, then it has to be the existing template name that exists in the private cert engine."
+  description = "The name of the Certificate Template to create for a private certificate secret engine. When `existing_secrets_manager_cert_crn` input variable is `null`, then it has to be the existing template name that exists in the private cert engine. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-private-certificates&interface=ui)"
   default     = null
 }
 

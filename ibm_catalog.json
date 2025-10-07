@@ -22,37 +22,38 @@
         "OpenVPN"
       ],
       "short_description": "Creates client-to-site VPN connectivity to VPC",
-      "long_description": "Some VPC patterns are configured with private networks not available over the internet. To access these networks, there are several connectivity options. This deployable architecture pattern configures the client-to-site VPN Server connectivity with only a few required inputs to configure it within an existing VPC. Once deployed, you can install an OpenVPN client application and import a profile from the VPN Server on the devices you want to access the VPN.  The configuration can include a list of users that will be provided access to the private network, controlled by IBM Cloud IAM.",
+      "long_description": "Some VPC patterns are configured with private networks not available over the internet. To access these networks, there are several connectivity options. This deployable architecture pattern configures the client-to-site VPN Server connectivity with only a few required inputs to configure it within an existing VPC. Once deployed, you can install an [OpenVPN client application](https://cloud.ibm.com/docs/vpc?topic=vpc-setting-up-vpn-client) and import a profile from the VPN Server on the devices you want to access the VPN.  The configuration can include a list of users that will be provided access to the private network, controlled by IBM Cloud IAM.\n\nℹ️ This Terraform-based automation is part of a broader suite of IBM-maintained Infrastructure as Code (IaC) assets, each following the naming pattern \"Cloud automation for *servicename*\" and focusing on single IBM Cloud service. These single-service deployable architectures can be used on their own to streamline and automate service deployments through an [IaC approach](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-understanding-projects), or assembled together into a broader [automated IaC stack](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-config-stack) to automate the deployment of an end-to-end solution architecture.",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/blob/main/solutions/fully-configurable/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/main/images/c2s_vpn.svg",
       "provider_name": "IBM",
       "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues please open an issue in the repository [https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/issues](https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/issues). Please note this product is not supported via the IBM Cloud Support Center.",
       "features": [
         {
-          "description": "Supports using an existing Secrets Manager instance, to create a secret group and a new private cert.",
-          "title": "Configures existing Secrets Manager instance, and create a secret group and a new private cert."
+          "description": "Secrets Manager",
+          "title": "Supports configuring an existing [Secrets Manager](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-getting-started) instance to create a secret group and a new private certificate."
         },
         {
-          "description": "The network ACL on this subnet grants the access from sources according to the rules defined with 'network_acls' input variable.",
-          "title": "A subnet named 'client-to-site-subnet' in the VPC"
+          "description": "ACL rules",
+          "title": "The [network ACL](https://cloud.ibm.com/docs/vpc?topic=vpc-configuring-acls-vpn) on the `client-to-site-subnet` subnet grants access based on the rules defined by the `network_acls` input variable."
         },
         {
-          "description": "A new security group named 'client-to-site-sg' that allows incoming request from sources defined in'security_group_rules'",
-          "title": "client-to-site Security Group"
+          "description": "Security group",
+          "title": "Creates a new [security group](https://cloud.ibm.com/docs/security-groups?topic=security-groups-about-ibm-security-groups) named `client-to-site-sg` that allows incoming requests from sources defined in the `security_group_rules` input variable."
         },
         {
-          "description": "An IAM access group allowing users to authenticate and connect to the client-to-site VPN gateway",
-          "title": "A new IAM Access Group for VPN users"
+          "description": "IAM access group",
+          "title": "Creates an [IAM access group](https://cloud.ibm.com/docs/account?topic=account-groups&interface=ui) that allows users to authenticate and connect to the client-to-site VPN gateway."
         },
         {
-          "description": "VPN gateway located in the client-to-site-subnet subnet with routes configured to allow accessing the VPCs.",
-          "title": "A client-to-site VPN server"
+          "description": "VPN gateway",
+          "title": "Creates a [VPN gateway](https://cloud.ibm.com/docs/vpc?topic=vpc-using-vpn) in the `client-to-site-subnet` subnet, with routes configured to allow access to the VPCs."
         }
       ],
       "flavors": [
         {
           "label": "Fully configurable",
           "name": "fully-configurable",
+          "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "dependency_version_2": true,
@@ -141,7 +142,13 @@
             },
             {
               "key": "prefix",
-              "required": true
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen ('-'), and cannot contain consecutive hyphens ('--'). It should not exceed 16 characters.",
+                  "value": "^$|^__NULL__$|^[a-z](?!.*--)(?:[a-z0-9-]{0,14}[a-z0-9])?$"
+                }
+              ]
             },
             {
               "key": "vpn_name",
@@ -149,7 +156,7 @@
             },
             {
               "key": "existing_resource_group_name",
-              "required": true,
+              "display_name": "resource_group",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -157,7 +164,9 @@
                 "config_constraints": {
                   "identifier": "rg_name"
                 }
-              }
+              },
+              "default_value": "Default",
+              "description": "The name of an existing resource group to provision the resources."
             },
             {
               "key": "region",
@@ -378,59 +387,45 @@
                   "displayname": "public-and-private",
                   "value": "public-and-private"
                 }
-              ]
+              ],
+              "hidden": true
             }
           ],
           "iam_permissions": [
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator"
+                "crn:v1:bluemix:public:iam::::role:Viewer"
               ],
-              "service_name": "iam-identity"
+              "service_name": "Resource group only",
+              "notes": "Viewer access is required in the resource group you want to provision in."
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator"
+                "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "is.vpc"
+              "service_name": "iam-identity",
+              "notes": "Required for defining IAM access groups, policies, and members for controlled access."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "is.vpc",
+              "notes": "Required to manage and modify VPC resources."
             }
           ],
           "architecture": {
             "features": [
               {
-                "title": "Supports OpenVPN Clients",
-                "description": "Yes"
-              },
-              {
-                "title": "Separate IAM access list for VPN users",
-                "description": "Yes"
-              },
-              {
-                "title": "Separate secured VPC subnets for VPN Server",
-                "description": "Yes"
-              },
-              {
-                "title": "ACL that controls the access from different source",
-                "description": "Yes"
-              },
-              {
-                "title": "Security group that restricts the incoming request from different source",
-                "description": "Yes"
-              },
-              {
-                "title": "IBM-managed VPN Server",
-                "description": "Yes"
-              },
-              {
-                "title": "Access to private network via VPN clients",
-                "description": "Yes"
+                "title": " ",
+                "description": "Configured to use IBM secure by default standards, but can be edited to fit your use case."
               }
             ],
             "diagrams": [
               {
                 "diagram": {
                   "caption": "Client-to-site VPN configuration.",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/main/reference-architectures/reference-architectures/cts-fully-configurable-da.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/main/reference-architectures/reference-architectures/deployable-architecture-cts.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "Client-to-site VPN configuration."

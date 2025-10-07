@@ -45,7 +45,7 @@ module "secrets_manager_secret_group" {
 module "secrets_manager_private_certificate" {
   count                  = var.existing_secrets_manager_cert_crn == null ? 1 : 0
   source                 = "terraform-ibm-modules/secrets-manager-private-cert/ibm"
-  version                = "1.4.7"
+  version                = "1.5.1"
   cert_name              = (var.prefix != null && var.prefix != "") ? "${var.prefix}-cts-vpn-private-cert" : "cts-vpn-private-cert"
   cert_description       = "private certificate for client to site VPN connection"
   cert_template          = var.private_cert_engine_config_template_name
@@ -405,7 +405,7 @@ resource "time_sleep" "wait_for_security_group" {
 module "client_to_site_sg" {
   count                        = var.add_security_group ? 1 : 0
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.7.0"
+  version                      = "2.8.0"
   add_ibm_cloud_internal_rules = true
   vpc_id                       = local.existing_vpc_id
   resource_group               = module.resource_group.resource_group_id
