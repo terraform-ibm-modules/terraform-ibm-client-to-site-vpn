@@ -44,6 +44,7 @@ variable "existing_resource_group_name" {
 variable "existing_secrets_manager_instance_crn" {
   type        = string
   description = "The CRN of existing secrets manager where the certificate to use for the VPN is stored or where the new private certificate will be created. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-getting-started)"
+  default     = null
 }
 
 variable "existing_secrets_manager_cert_crn" {
@@ -211,10 +212,6 @@ variable "existing_subnet_ids" {
     error_message = "Set 'vpn_subnet_cidr_zone_1' and 'remote_cidr input variables' if 'existing_subnet_ids' input variable is not set."
   }
 
-  validation {
-    condition     = length(var.existing_subnet_ids) > 0 ? (var.vpn_subnet_cidr_zone_1 == null && var.remote_cidr == null) : true
-    error_message = "'vpn_subnet_cidr_zone_1' and 'remote_cidr' input variables can not be set if a 'existing_subnet_ids' input variable is already set"
-  }
 }
 
 variable "client_ip_pool" {
