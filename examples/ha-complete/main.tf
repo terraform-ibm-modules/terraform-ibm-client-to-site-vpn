@@ -54,7 +54,7 @@ module "private_secret_engine" {
   depends_on                = [module.secrets_manager]
   count                     = var.existing_sm_instance_guid == null ? 1 : 0
   source                    = "terraform-ibm-modules/secrets-manager-private-cert-engine/ibm"
-  version                   = "1.9.1"
+  version                   = "1.9.2"
   secrets_manager_guid      = local.sm_guid
   region                    = local.sm_region
   root_ca_name              = var.root_ca_name
@@ -71,7 +71,7 @@ module "private_secret_engine" {
 module "secrets_manager_private_certificate" {
   depends_on             = [module.private_secret_engine]
   source                 = "terraform-ibm-modules/secrets-manager-private-cert/ibm"
-  version                = "1.5.1"
+  version                = "1.5.2"
   cert_name              = "${var.prefix}-cts-vpn-private-cert"
   cert_description       = "an example private cert"
   cert_template          = var.certificate_template_name
