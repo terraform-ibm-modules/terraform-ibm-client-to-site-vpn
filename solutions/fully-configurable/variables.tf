@@ -49,7 +49,7 @@ variable "existing_secrets_manager_instance_crn" {
 variable "existing_secrets_manager_cert_crn" {
   type        = string
   description = "The CRN of existing secrets manager private certificate to use to create VPN. If the value is null, then new private certificate is created. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-certificates&interface=ui)"
-  default     = "crn:v1:bluemix:public:secrets-manager:us-south:a/abac0df06b644a9cabc6e44f55b3880e:4777d36a-62a4-4a93-8764-54916c5594d4:secret:ec954627-8de4-1456-24e0-b67109aa1cb0"
+  default     = null
 
   validation {
     condition     = var.existing_secrets_manager_cert_crn == null ? var.private_cert_engine_config_template_name != null && var.private_cert_engine_config_root_ca_common_name != null : true
@@ -284,7 +284,7 @@ variable "protocol" {
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
-  default     = "public"
+  default     = "private"
   nullable    = false
 
   validation {
