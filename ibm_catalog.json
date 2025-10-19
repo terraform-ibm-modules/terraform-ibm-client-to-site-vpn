@@ -103,7 +103,7 @@
             {
               "name": "deploy-arch-secrets-manager-private-cert",
               "id": "422283a7-9cb2-4149-8093-a36a799e1d27-global",
-              "version": "v1.5.1",
+              "version": "v1.6.1",
               "flavors": [
                 "fully-configurable"
               ],
