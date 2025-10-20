@@ -50,6 +50,7 @@ variable "existing_secrets_manager_instance_crn" {
 variable "existing_secrets_manager_cert_crn" {
   type        = string
   description = "The CRN of existing secrets manager private certificate to use to create VPN. If the value is null, then new private certificate is created. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-certificates&interface=ui)"
+  default     = null
 
   validation {
     condition     = var.existing_secrets_manager_cert_crn == null ? var.private_cert_engine_config_template_name != null && var.private_cert_engine_config_root_ca_common_name != null : true
