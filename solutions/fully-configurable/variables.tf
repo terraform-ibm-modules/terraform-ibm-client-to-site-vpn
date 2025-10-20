@@ -44,7 +44,6 @@ variable "existing_resource_group_name" {
 variable "existing_secrets_manager_instance_crn" {
   type        = string
   description = "The CRN of existing secrets manager where the certificate to use for the VPN is stored or where the new private certificate will be created. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-getting-started)"
-  default     = null
 }
 
 variable "existing_secrets_manager_cert_crn" {
