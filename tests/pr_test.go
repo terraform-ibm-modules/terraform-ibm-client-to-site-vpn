@@ -268,7 +268,6 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 		"deploy-arch-ibm-client-to-site-vpn",
 		"fully-configurable",
 		map[string]interface{}{
-			"prefix":                       options.Prefix,
 			"region":                       "eu-de",
 			"secrets_manager_service_plan": "trial",
 		},
