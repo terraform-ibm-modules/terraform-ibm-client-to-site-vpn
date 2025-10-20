@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.3.0"
+  version = "1.4.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -30,7 +30,7 @@ module "secrets_manager_group" {
 # Create the private cert
 module "secrets_manager_private_certificate" {
   source                 = "terraform-ibm-modules/secrets-manager-private-cert/ibm"
-  version                = "1.5.1"
+  version                = "1.6.1"
   cert_name              = "${var.prefix}-cts-vpn-private-cert"
   cert_description       = "an example private cert"
   cert_template          = var.certificate_template_name
@@ -50,7 +50,7 @@ module "secrets_manager_private_certificate" {
 # Minimal VPC for illustration purpose: 1 subnet across 1 availability zone
 module "basic_vpc" {
   source               = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version              = "8.5.0"
+  version              = "8.6.0"
   resource_group_id    = module.resource_group.resource_group_id
   region               = var.region
   name                 = "vpc"
