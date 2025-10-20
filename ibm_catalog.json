@@ -125,7 +125,7 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "secrets_manager_crn",
+                  "dependency_output": "secrets_manager_crn",
                   "version_input": "existing_secrets_manager_instance_crn"
                 },
                 {
