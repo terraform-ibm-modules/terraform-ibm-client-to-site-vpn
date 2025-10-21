@@ -107,6 +107,7 @@
             },
             {
               "name": "deploy-arch-secrets-manager-private-cert",
+              "description": "Configures secrets manager instance, private certificate engine and VPN server certificate. Client certificate will not get created and will have to be created manually.",
               "id": "422283a7-9cb2-4149-8093-a36a799e1d27-global",
               "version": "v1.7.0",
               "flavors": [
@@ -142,6 +143,40 @@
                   "dependency_input": "secrets_manager_service_plan",
                   "version_input": "secrets_manager_service_plan",
                   "reference_version": true
+                },
+                {
+                  "dependency_input": "root_ca_name",
+                  "version_input": "root_ca_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "root_ca_common_name",
+                  "version_input": "root_ca_common_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "intermediate_ca_name",
+                  "version_input": "intermediate_ca_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "intermediate_ca_common_name",
+                  "version_input": "intermediate_ca_common_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "certificate_template_name",
+                  "version_input": "certificate_template_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "template_max_ttl",
+                  "version_input": "template_max_ttl",
+                  "reference_version": true
+                },
+                {
+                  "version_input": "enable_certificate_auth",
+                  "value": false
                 },
                 {
                   "dependency_output": "secret_crn",
@@ -249,6 +284,54 @@
             },
             {
               "key": "existing_secrets_manager_cert_crn"
+            },
+            {
+              "key": "root_ca_name",
+              "type": "string",
+              "required": false,
+              "virtual": true,
+              "default_value": "root-ca",
+              "description": "The name of the Root Certificate Authority you want to create."
+            },
+            {
+              "key": "root_ca_common_name",
+              "type": "string",
+              "required": false,
+              "virtual": true,
+              "default_value": "example-root.com",
+              "description": "The common name of the Root Certificate Authority you want to create."
+            },
+            {
+              "key": "intermediate_ca_name",
+              "type": "string",
+              "required": false,
+              "virtual": true,
+              "default_value": "intermediate-ca",
+              "description": "The name of the Intermediate Certificate Authority you want to create."
+            },
+            {
+              "key": "intermediate_ca_common_name",
+              "type": "string",
+              "required": false,
+              "virtual": true,
+              "default_value": "example-int.com",
+              "description": "The common name of the Intermediate Certificate Authority you want to create."
+            },
+            {
+              "key": "certificate_template_name",
+              "type": "string",
+              "required": false,
+              "virtual": true,
+              "default_value": "template",
+              "description": "The name of the Certificate Template you want to create."
+            },
+            {
+              "key": "template_max_ttl",
+              "type": "string",
+              "required": false,
+              "virtual": true,
+              "default_value": "8760h",
+              "description": "Max TTL for the certificate template you want to create."
             },
             {
               "key": "private_cert_engine_config_root_ca_common_name"
