@@ -33,8 +33,8 @@ variable "prefix" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
-  default     = null
+  description = "The name of an existing resource group to provision the resources. [Learn more](https://cloud.ibm.com/docs/account?topic=account-rgs&interface=ui#create_rgs) about how to create a resource group."
+  default     = "Default"
 }
 
 ##############################################################################
@@ -211,10 +211,6 @@ variable "existing_subnet_ids" {
     error_message = "Set 'vpn_subnet_cidr_zone_1' and 'remote_cidr input variables' if 'existing_subnet_ids' input variable is not set."
   }
 
-  validation {
-    condition     = length(var.existing_subnet_ids) > 0 ? (var.vpn_subnet_cidr_zone_1 == null && var.remote_cidr == null) : true
-    error_message = "'vpn_subnet_cidr_zone_1' and 'remote_cidr' input variables can not be set if a 'existing_subnet_ids' input variable is already set"
-  }
 }
 
 variable "client_ip_pool" {
