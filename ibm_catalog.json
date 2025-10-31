@@ -561,7 +561,8 @@
               }
             ]
           },
-          "terraform_version": "1.12.2"
+          "terraform_version": "1.12.2",
+          "ignore_readme": true
         }
       ]
     }
