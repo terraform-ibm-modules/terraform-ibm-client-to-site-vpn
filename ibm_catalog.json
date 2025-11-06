@@ -109,7 +109,7 @@
               "name": "deploy-arch-secrets-manager-private-cert",
               "description": "Configures secrets manager instance, private certificate engine and VPN server certificate. Client certificate will not get created and will have to be created manually.",
               "id": "422283a7-9cb2-4149-8093-a36a799e1d27-global",
-              "version": "TBC",
+              "version": "v1.7.4",
               "flavors": [
                 "fully-configurable"
               ],
