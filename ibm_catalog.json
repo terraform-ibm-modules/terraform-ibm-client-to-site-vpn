@@ -62,7 +62,7 @@
               "name": "deploy-arch-ibm-slz-vpc",
               "description": "Configure the VPC and subnets required to deploy VPN Server.",
               "id": "9fc0fa64-27af-4fed-9dce-47b3640ba739-global",
-              "version": "v8.7.0",
+              "version": "v8.8.3",
               "flavors": [
                 "fully-configurable"
               ],
@@ -109,7 +109,7 @@
               "name": "deploy-arch-secrets-manager-private-cert",
               "description": "Configures secrets manager instance, private certificate engine and VPN server certificate. Client certificate will not get created and will have to be created manually.",
               "id": "422283a7-9cb2-4149-8093-a36a799e1d27-global",
-              "version": "v1.7.0",
+              "version": "v1.7.4",
               "flavors": [
                 "fully-configurable"
               ],
