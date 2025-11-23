@@ -38,7 +38,7 @@ output "next_step_primary_label" {
 }
 
 output "next_step_primary_url" {
-  value       = "https://cloud.ibm.com/vpc-ext/network/vpns/${module.vpn.vpn_server_id}?region=${module.existing_vpc_crn_parser.region}"
+  value       = "https://cloud.ibm.com/infrastructure/network/vpnServers/${module.existing_vpc_crn_parser.region}~${module.vpn.vpn_server_id}/overview"
   description = "Primary URL for the Client-to-Site VPN instance"
 }
 
