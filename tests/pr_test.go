@@ -164,13 +164,13 @@ func TestFullyConfigurableSolutionInSchematics(t *testing.T) {
 }
 
 // Upgrade test for "Fully configurable" DA variation in schematics
-func TestFullyConfigurableSolutionUpgrade(t *testing.T) {
+func TestFullyConfigurableSolutionInSchematicsUpgrade(t *testing.T) {
 	t.Parallel()
 
 	// ------------------------------------------------------------------------------------------------------
 	// Create SLZ VPC, resource group first
 	// ------------------------------------------------------------------------------------------------------
-	prefix := fmt.Sprintf("cts-s-%s", strings.ToLower(random.UniqueId()))
+	prefix := fmt.Sprintf("cts-u-%s", strings.ToLower(random.UniqueId()))
 	realTerraformDir := "./resources"
 	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
 
@@ -209,7 +209,7 @@ func TestFullyConfigurableSolutionUpgrade(t *testing.T) {
 		CheckApplyResultForUpgrade: true,
 		WaitJobCompleteMinutes:     60,
 		Region:                     region,
-		Tags:                       []string{"test-schematic"},
+		Tags:                       []string{"test-schematic-upgrade"},
 		DeleteWorkspaceOnFail:      false,
 	})
 
@@ -234,8 +234,9 @@ func TestFullyConfigurableSolutionUpgrade(t *testing.T) {
 		assert.NoError(t, err, "Upgrade test should complete without errors")
 	}
 
-	// Clean up resources unless DO_NOT_DESTROY_ON_FAILURE is set
+	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
 	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
+	// Destroy the temporary existing resources if required
 	if t.Failed() && strings.ToLower(envVal) == "true" {
 		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
 	} else {
