@@ -77,14 +77,22 @@ func TestRunHAExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestFullyConfigurableSolutionInSchematics(t *testing.T) {
+func TestRunHAUpgrade(t *testing.T) {
 	t.Parallel()
+
+	options := setupHAOptions(t, "cts-vpn-ha-upg")
+	output, err := options.RunTestUpgrade()
+	if !options.UpgradeTestSkipped {
+		assert.Nil(t, err, "This should not have errored")
+		assert.NotNil(t, output, "Expected some output")
+	}
+}
+
+func setupFullyConfigurableOptions(t *testing.T, prefix string) (*testschematic.TestSchematicOptions, *terraform.Options) {
 
 	// ------------------------------------------------------------------------------------------------------
 	// Create SLZ VPC, resource group first
 	// ------------------------------------------------------------------------------------------------------
-
-	prefix := fmt.Sprintf("cts-s-%s", strings.ToLower(random.UniqueId()))
 	realTerraformDir := "./resources"
 	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
 
@@ -115,40 +123,52 @@ func TestFullyConfigurableSolutionInSchematics(t *testing.T) {
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp resources (SLZ VPC and Secrets Manager) failed")
-	} else {
-
-		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-			Testing: t,
-			Prefix:  prefix,
-			TarIncludePatterns: []string{
-				fullyConfigurableFlavorDir + "/*.*",
-				"*.tf",
-			},
-			ResourceGroup:          terraform.Output(t, existingTerraformOptions, "resource_group_name"),
-			TemplateFolder:         fullyConfigurableFlavorDir,
-			Tags:                   []string{"test-schematic"},
-			DeleteWorkspaceOnFail:  false,
-			WaitJobCompleteMinutes: 60,
-			Region:                 region,
-		})
-		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "prefix", Value: options.Prefix, DataType: "string"},
-			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
-			{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
-			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "management_vpc_crn"), DataType: "string"},
-			{Name: "private_cert_engine_config_root_ca_common_name", Value: fmt.Sprintf("%s%s", options.Prefix, ".com"), DataType: "string"},
-			{Name: "private_cert_engine_config_template_name", Value: permanentResources["privateCertTemplateName"], DataType: "string"},
-			{Name: "provider_visibility", Value: "public", DataType: "string"},
-			{Name: "remote_cidr", Value: "10.10.120.0/24", DataType: "string"},
-			{Name: "vpn_subnet_cidr_zone_1", Value: "10.10.40.0/24", DataType: "string"},
-			{Name: "vpn_subnet_cidr_zone_2", Value: "10.10.80.0/24", DataType: "string"},
-			{Name: "vpn_client_access_acl_ids", Value: []string{terraform.Output(t, existingTerraformOptions, "default_network_acl_id")}, DataType: "list(string)"},
-			{Name: "protocol", Value: "tcp", DataType: "string"},
-		}
-		err := options.RunSchematicTest()
-		assert.Nil(t, err, "This should not have errored")
+		return nil, nil
 	}
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  prefix,
+		TarIncludePatterns: []string{
+			fullyConfigurableFlavorDir + "/*.*",
+			"*.tf",
+		},
+		ResourceGroup:          terraform.Output(t, existingTerraformOptions, "resource_group_name"),
+		TemplateFolder:         fullyConfigurableFlavorDir,
+		Tags:                   []string{"test-schematic"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 60,
+		Region:                 region,
+	})
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
+		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "management_vpc_crn"), DataType: "string"},
+		{Name: "private_cert_engine_config_root_ca_common_name", Value: fmt.Sprintf("%s%s", options.Prefix, ".com"), DataType: "string"},
+		{Name: "private_cert_engine_config_template_name", Value: permanentResources["privateCertTemplateName"], DataType: "string"},
+		{Name: "provider_visibility", Value: "public", DataType: "string"},
+		{Name: "remote_cidr", Value: "10.10.120.0/24", DataType: "string"},
+		{Name: "vpn_subnet_cidr_zone_1", Value: "10.10.40.0/24", DataType: "string"},
+		{Name: "vpn_subnet_cidr_zone_2", Value: "10.10.80.0/24", DataType: "string"},
+		{Name: "vpn_client_access_acl_ids", Value: []string{terraform.Output(t, existingTerraformOptions, "default_network_acl_id")}, DataType: "list(string)"},
+		{Name: "protocol", Value: "tcp", DataType: "string"},
+	}
+
+	return options, existingTerraformOptions
+}
+
+func TestFullyConfigurableSolutionInSchematics(t *testing.T) {
+	t.Parallel()
+	prefix := fmt.Sprintf("cts-s-%s", strings.ToLower(random.UniqueId()))
+	options, existingTerraformOptions := setupFullyConfigurableOptions(t, prefix)
+	if options == nil || existingTerraformOptions == nil {
+		t.Fatal("Failed to create agent schematic options (prerequisite Terraform deployment failed)")
+	}
+
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
 
 	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
 	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
@@ -167,67 +187,14 @@ func TestFullyConfigurableSolutionInSchematics(t *testing.T) {
 func TestFullyConfigurableSolutionInSchematicsUpgrade(t *testing.T) {
 	t.Parallel()
 
-	// ------------------------------------------------------------------------------------------------------
-	// Create SLZ VPC, resource group first
-	// ------------------------------------------------------------------------------------------------------
+	// Use the shared setup function to prepare agent schematic options and Terraform prereqs
 	prefix := fmt.Sprintf("cts-u-%s", strings.ToLower(random.UniqueId()))
-	realTerraformDir := "./resources"
-	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
+	options, existingTerraformOptions := setupFullyConfigurableOptions(t, prefix)
 
-	// Verify ibmcloud_api_key variable is set
-	checkVariable := "TF_VAR_ibmcloud_api_key"
-	val, present := os.LookupEnv(checkVariable)
-	require.True(t, present, checkVariable+" environment variable not set")
-	require.NotEqual(t, "", val, checkVariable+" environment variable is empty")
-
-	// Programmatically determine region to use based on availability
-	region, _ := testhelper.GetBestVpcRegion(val, "../common-dev-assets/common-go-assets/cloudinfo-region-vpc-gen2-prefs.yaml", "eu-de")
-
-	logger.Log(t, "Tempdir: ", tempTerraformDir)
-	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		TerraformDir: tempTerraformDir,
-		Vars: map[string]interface{}{
-			"prefix":        prefix,
-			"region":        region,
-			"resource_tags": []string{"test-schematic-upgrade"},
-		},
-		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
-		// This is the same as setting the -upgrade=true flag with terraform.
-		Upgrade: true,
-	})
-
-	terraform.WorkspaceSelectOrNew(t, existingTerraformOptions, prefix)
-	_, existErr := terraform.InitAndApplyE(t, existingTerraformOptions)
-	require.NoError(t, existErr, "Init and Apply of temp resources (SLZ VPC and Secrets Manager) failed")
-
-	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing:                    t,
-		Prefix:                     prefix,
-		TarIncludePatterns:         []string{fullyConfigurableFlavorDir + "/*.*", "*.tf"},
-		TemplateFolder:             fullyConfigurableFlavorDir,
-		ResourceGroup:              terraform.Output(t, existingTerraformOptions, "resource_group_name"),
-		CheckApplyResultForUpgrade: true,
-		WaitJobCompleteMinutes:     60,
-		Region:                     region,
-		Tags:                       []string{"test-schematic-upgrade"},
-		DeleteWorkspaceOnFail:      false,
-	})
-
-	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-		{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
-		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
-		{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "management_vpc_crn"), DataType: "string"},
-		{Name: "private_cert_engine_config_root_ca_common_name", Value: fmt.Sprintf("%s%s", options.Prefix, ".com"), DataType: "string"},
-		{Name: "private_cert_engine_config_template_name", Value: permanentResources["privateCertTemplateName"], DataType: "string"},
-		{Name: "provider_visibility", Value: "public", DataType: "string"},
-		{Name: "remote_cidr", Value: "10.10.120.0/24", DataType: "string"},
-		{Name: "vpn_subnet_cidr_zone_1", Value: "10.10.40.0/24", DataType: "string"},
-		{Name: "vpn_subnet_cidr_zone_2", Value: "10.10.80.0/24", DataType: "string"},
-		{Name: "vpn_client_access_acl_ids", Value: []string{terraform.Output(t, existingTerraformOptions, "default_network_acl_id")}, DataType: "list(string)"},
-		{Name: "protocol", Value: "tcp", DataType: "string"},
+	if options == nil || existingTerraformOptions == nil {
+		t.Fatal("Failed to create agent schematic options (prerequisite Terraform deployment failed)")
 	}
+	options.CheckApplyResultForUpgrade = true
 
 	err := options.RunSchematicUpgradeTest()
 	if !options.UpgradeTestSkipped {
