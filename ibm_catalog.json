@@ -561,7 +561,7 @@
               {
                 "diagram": {
                   "caption": "Client-to-site VPN configuration.",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/main/reference-architectures/reference-architectures/deployable-architecture-cts.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/main/reference-architectures/deployable-architecture-cts.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "Client-to-site VPN configuration."
