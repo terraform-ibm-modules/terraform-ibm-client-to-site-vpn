@@ -12,8 +12,8 @@ This module automates the provisioning of a client-to-site VPN in a VPC cluster.
 ## Overview
 * [terraform-ibm-client-to-site-vpn](#terraform-ibm-client-to-site-vpn)
 * [Examples](./examples)
-    * [Basic example creating a standalone VPN server](./examples/basic)
-    * [Complete example creating a high availability VPN server](./examples/ha-complete)
+    * <div style="display: inline-block;"><a href="./examples/basic">Basic example creating a standalone VPN server</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=ctsv-basic-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/tree/main/examples/basic" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/ha-complete">Complete example creating a high availability VPN server</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=ctsv-ha-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/tree/main/examples/ha-complete" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
