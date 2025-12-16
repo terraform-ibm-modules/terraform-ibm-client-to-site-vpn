@@ -60,6 +60,7 @@
           "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
+          "short_description": "Ideal for users who want flexibility with a reliable starting point.",
           "dependency_version_2": true,
           "dependencies": [
             {
@@ -249,7 +250,12 @@
               "custom_config": {
                 "grouping": "deployment",
                 "original_grouping": "deployment",
-                "type": "code_editor"
+                "type": "code_editor",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -262,7 +268,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
