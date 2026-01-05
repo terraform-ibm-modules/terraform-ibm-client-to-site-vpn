@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -20,7 +21,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 )
 
 // const resourceGroup = "geretain-test-client-to-site-vpn"
@@ -298,9 +298,6 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 
 	t.Parallel()
 
-	// use unique resource group to prevent s2s auth policy clash
-	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
-
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
 		Testing:   t,
 		Prefix:    "cts-vpn",
@@ -314,6 +311,7 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 		map[string]interface{}{
 			"region":                       "eu-de",
 			"secrets_manager_service_plan": "trial",
+			// use unique resource group to prevent s2s auth policy clash
 			"existing_resource_group_name": generateUniqueResourceGroupName(options.Prefix),
 		},
 	)
@@ -349,4 +347,9 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 
 	err := options.RunAddonTest()
 	require.NoError(t, err)
+}
+
+func generateUniqueResourceGroupName(baseName string) string {
+	id := uuid.New().String()[:8]
+	return fmt.Sprintf("%s-%s", baseName, id)
 }
