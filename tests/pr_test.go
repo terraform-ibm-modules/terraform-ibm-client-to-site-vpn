@@ -304,6 +304,9 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 		QuietMode: false, // Suppress logs except on failure
 	})
 
+	// use unique resource group to prevent s2s auth policy clash
+	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
+
 	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
 		options.Prefix,
 		"deploy-arch-ibm-client-to-site-vpn",
@@ -312,7 +315,7 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 			"region":                       "eu-de",
 			"secrets_manager_service_plan": "trial",
 			// use unique resource group to prevent s2s auth policy clash
-			"existing_resource_group_name": generateUniqueResourceGroupName(options.Prefix),
+			"existing_resource_group_name": uniqueResourceGroup,
 		},
 	)
 
@@ -345,8 +348,11 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 		},
 	}
 
-	err := options.RunAddonTest()
+	var err = sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
+		return options.RunAddonTest()
+	})
 	require.NoError(t, err)
+
 }
 
 func generateUniqueResourceGroupName(baseName string) string {
