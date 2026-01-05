@@ -20,6 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 )
 
 // const resourceGroup = "geretain-test-client-to-site-vpn"
@@ -297,6 +298,9 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 
 	t.Parallel()
 
+	// use unique resource group to prevent s2s auth policy clash
+	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
+
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
 		Testing:   t,
 		Prefix:    "cts-vpn",
@@ -310,6 +314,7 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 		map[string]interface{}{
 			"region":                       "eu-de",
 			"secrets_manager_service_plan": "trial",
+			"existing_resource_group_name": generateUniqueResourceGroupName(options.Prefix),
 		},
 	)
 
@@ -325,7 +330,7 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
 			},
 		},
-		// // Disable target / route creation to prevent hitting quota in account
+		// Disable target / route creation to prevent hitting quota in account
 		{
 			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
 			OfferingFlavor: "fully-configurable",
