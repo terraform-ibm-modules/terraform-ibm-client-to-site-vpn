@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -303,6 +304,9 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 		QuietMode: false, // Suppress logs except on failure
 	})
 
+	// use unique resource group to prevent s2s auth policy clash
+	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
+
 	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
 		options.Prefix,
 		"deploy-arch-ibm-client-to-site-vpn",
@@ -310,6 +314,8 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 		map[string]interface{}{
 			"region":                       "eu-de",
 			"secrets_manager_service_plan": "trial",
+			// use unique resource group to prevent s2s auth policy clash
+			"existing_resource_group_name": uniqueResourceGroup,
 		},
 	)
 
@@ -325,7 +331,7 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
 			},
 		},
-		// // Disable target / route creation to prevent hitting quota in account
+		// Disable target / route creation to prevent hitting quota in account
 		{
 			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
 			OfferingFlavor: "fully-configurable",
@@ -342,6 +348,14 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 		},
 	}
 
-	err := options.RunAddonTest()
+	var err = sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
+		return options.RunAddonTest()
+	})
 	require.NoError(t, err)
+
+}
+
+func generateUniqueResourceGroupName(baseName string) string {
+	id := uuid.New().String()[:8]
+	return fmt.Sprintf("%s-%s", baseName, id)
 }
