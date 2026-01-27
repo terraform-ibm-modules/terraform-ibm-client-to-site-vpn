@@ -86,7 +86,7 @@ data "ibm_is_vpc" "basic_vpc" {
 ########################################################################################################################
 
 module "vpn" {
-  source                        = "../.."
+  source                        = "git::https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn?ref=main"
   server_cert_crn               = module.secrets_manager_private_certificate.secret_crn
   vpn_gateway_name              = "${var.prefix}-c2s-vpn"
   resource_group_id             = module.resource_group.resource_group_id
