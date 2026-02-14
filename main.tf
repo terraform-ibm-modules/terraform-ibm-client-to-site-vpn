@@ -28,7 +28,7 @@ resource "time_sleep" "wait_for_authorization_policy" {
 
 module "sm_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.4.2"
   crn     = var.server_cert_crn
 }
 
