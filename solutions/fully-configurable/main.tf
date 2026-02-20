@@ -413,8 +413,15 @@ module "client_to_site_sg" {
   security_group_rules         = local.security_group_rule
 }
 
+resource "time_sleep" "wait_for_vpn" {
+  count           = var.add_security_group ? 1 : 0
+  depends_on      = [module.vpn]
+  create_duration = "30s"
+}
+
 # we add security group target after VPN and client_to_site_sg are created. Otherwise cycle dependency error is thrown
 resource "ibm_is_security_group_target" "sg_target" {
+  depends_on     = [time_sleep.wait_for_vpn]
   count          = var.add_security_group && length([module.vpn.vpn_server_id]) > 0 ? 1 : 0
   security_group = module.client_to_site_sg[0].security_group_id
   target         = local.target_ids[count.index]
