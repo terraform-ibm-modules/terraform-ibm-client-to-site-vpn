@@ -371,6 +371,25 @@ resource "ibm_is_network_acl_rule" "inbound_acl_rules_subnet1" {
 
 ##############################################################################
 
+module "client_to_site_sg" {
+  count                        = var.add_security_group ? 1 : 0
+  source                       = "terraform-ibm-modules/security-group/ibm"
+  version                      = "2.8.0"
+  add_ibm_cloud_internal_rules = true
+  vpc_id                       = local.existing_vpc_id
+  resource_group               = module.resource_group.resource_group_id
+  security_group_name          = (var.prefix != null && var.prefix != "") ? "${var.prefix}-client-to-site-sg" : "client-to-site-sg"
+  security_group_rules         = local.security_group_rule
+}
+
+# workaround for https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/issues/45
+resource "time_sleep" "wait_for_security_group" {
+  count            = var.add_security_group ? 1 : 0
+  depends_on       = [module.client_to_site_sg.ibm_is_security_group]
+  create_duration  = "10s"
+  destroy_duration = "60s"
+}
+
 module "vpn" {
   source                               = "../.."
   depends_on                           = [time_sleep.wait_for_security_group]
@@ -394,25 +413,6 @@ module "vpn" {
   skip_secrets_manager_iam_auth_policy = var.skip_secrets_manager_iam_auth_policy
 }
 
-# workaround for https://github.com/terraform-ibm-modules/terraform-ibm-client-to-site-vpn/issues/45
-resource "time_sleep" "wait_for_security_group" {
-  count            = var.add_security_group ? 1 : 0
-  depends_on       = [module.client_to_site_sg.ibm_is_security_group]
-  create_duration  = "10s"
-  destroy_duration = "60s"
-}
-
-module "client_to_site_sg" {
-  count                        = var.add_security_group ? 1 : 0
-  source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.8.0"
-  add_ibm_cloud_internal_rules = true
-  vpc_id                       = local.existing_vpc_id
-  resource_group               = module.resource_group.resource_group_id
-  security_group_name          = (var.prefix != null && var.prefix != "") ? "${var.prefix}-client-to-site-sg" : "client-to-site-sg"
-  security_group_rules         = local.security_group_rule
-}
-
 resource "time_sleep" "wait_for_vpn" {
   count           = var.add_security_group ? 1 : 0
   depends_on      = [module.vpn]
@@ -425,4 +425,7 @@ resource "ibm_is_security_group_target" "sg_target" {
   count          = var.add_security_group && length([module.vpn.vpn_server_id]) > 0 ? 1 : 0
   security_group = module.client_to_site_sg[0].security_group_id
   target         = local.target_ids[count.index]
+  timeouts {
+    create = "5m"
+  }
 }
