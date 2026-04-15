@@ -301,10 +301,12 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 
 	t.Parallel()
 
+	overrideInputMappings := true
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing:   t,
-		Prefix:    "cts-vpn",
-		QuietMode: false, // Suppress logs except on failure
+		Testing:              t,
+		Prefix:               "cts-vpn",
+		QuietMode:            false, // Suppress logs except on failure
+		OverrideInputMappings: &overrideInputMappings, // service_plan on SM dependency is also set via reference from parent secrets_manager_service_plan; allow explicit __NULL__ to take precedence
 	})
 
 	// use unique resource group to prevent s2s auth policy clash
