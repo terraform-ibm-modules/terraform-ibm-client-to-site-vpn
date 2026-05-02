@@ -31,7 +31,7 @@ module "existing_secrets_manager_cert_crn_parser" {
 module "secrets_manager_secret_group" {
   count                    = var.existing_secrets_manager_cert_crn == null && var.existing_secrets_manager_secret_group_id == null ? 1 : 0
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.5.0"
+  version                  = "1.5.1"
   region                   = module.existing_sm_crn_parser.region
   secrets_manager_guid     = module.existing_sm_crn_parser.service_instance
   secret_group_name        = (var.prefix != null && var.prefix != "") ? "${var.prefix}-cert-secret-group" : "cert-secret-group"
@@ -45,7 +45,7 @@ module "secrets_manager_secret_group" {
 module "secrets_manager_private_certificate" {
   count                  = var.existing_secrets_manager_cert_crn == null ? 1 : 0
   source                 = "terraform-ibm-modules/secrets-manager-private-cert/ibm"
-  version                = "1.12.0"
+  version                = "1.12.2"
   cert_name              = (var.prefix != null && var.prefix != "") ? "${var.prefix}-cts-vpn-private-cert" : "cts-vpn-private-cert"
   cert_description       = "private certificate for client to site VPN connection"
   cert_template          = var.private_cert_engine_config_template_name
@@ -374,7 +374,7 @@ resource "ibm_is_network_acl_rule" "inbound_acl_rules_subnet1" {
 module "client_to_site_sg" {
   count                        = var.add_security_group ? 1 : 0
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.9.0"
+  version                      = "2.9.1"
   add_ibm_cloud_internal_rules = true
   vpc_id                       = local.existing_vpc_id
   resource_group               = module.resource_group.resource_group_id
