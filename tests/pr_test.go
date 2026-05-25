@@ -301,7 +301,6 @@ func TestFullyConfigurableSolutionExistingResources(t *testing.T) {
 func TestAddonsDefaultConfiguration(t *testing.T) {
 
 	t.Parallel()
-	t.Skip("Skipping this test temporarily because of IAM issues https://github.ibm.com/GoldenEye/issues/issues/18432")
 	overrideInputMappings := true
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
 		Testing:               t,
