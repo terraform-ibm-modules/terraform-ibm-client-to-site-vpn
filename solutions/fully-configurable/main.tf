@@ -78,117 +78,133 @@ locals {
   acl_outbound_rules_tcp = [
     for i, subnet_cidr in local.subnet_cidrs :
     {
-      name        = "outbound-tcp-${i}"
-      action      = "allow"
-      source      = subnet_cidr
-      destination = var.remote_cidr
-      direction   = "outbound"
-      udp         = null
-      tcp = {
-        port_min        = 1
-        port_max        = 65535
-        source_port_min = 1
-        source_port_max = 65535
-      }
+      name            = "outbound-tcp-${i}"
+      action          = "allow"
+      source          = subnet_cidr
+      destination     = var.remote_cidr
+      direction       = "outbound"
+      protocol        = "tcp"
+      port_min        = 1
+      port_max        = 65535
+      source_port_min = 1
+      source_port_max = 65535
+      type            = null
+      code            = null
     }
   ]
   acl_outbound_rules_udp_443 = [
     for i, subnet_cidr in local.subnet_cidrs :
     {
-      name        = "outbound-udp-443-${i}"
-      action      = "allow"
-      source      = subnet_cidr
-      destination = var.remote_cidr
-      direction   = "outbound"
-      udp = {
-        source_port_min = 443
-        source_port_max = 443
-      }
-      tcp = null
+      name            = "outbound-udp-443-${i}"
+      action          = "allow"
+      source          = subnet_cidr
+      destination     = var.remote_cidr
+      direction       = "outbound"
+      protocol        = "udp"
+      port_min        = null
+      port_max        = null
+      source_port_min = 443
+      source_port_max = 443
+      type            = null
+      code            = null
     }
   ]
   acl_outbound_rules_udp_53 = [
     for i, client_dns_server_ip in var.client_dns_server_ips :
     {
-      name        = "outbound-udp-53-${i}"
-      action      = "allow"
-      source      = client_dns_server_ip
-      destination = var.remote_cidr
-      direction   = "outbound"
-      udp = {
-        port_min = 53
-        port_max = 53
-      }
-      tcp = null
+      name            = "outbound-udp-53-${i}"
+      action          = "allow"
+      source          = client_dns_server_ip
+      destination     = var.remote_cidr
+      direction       = "outbound"
+      protocol        = "udp"
+      port_min        = 53
+      port_max        = 53
+      source_port_min = null
+      source_port_max = null
+      type            = null
+      code            = null
     }
   ]
   acl_inbound_rules_tcp = [
     for i, subnet_cidr in local.subnet_cidrs :
     {
-      name        = "inbound-tcp-${i}"
-      action      = "allow"
-      source      = var.remote_cidr
-      destination = subnet_cidr
-      direction   = "inbound"
-      tcp = {
-        port_min        = 1
-        port_max        = 65535
-        source_port_min = 1
-        source_port_max = 65535
-      }
-      udp = null
+      name            = "inbound-tcp-${i}"
+      action          = "allow"
+      source          = var.remote_cidr
+      destination     = subnet_cidr
+      direction       = "inbound"
+      protocol        = "tcp"
+      port_min        = 1
+      port_max        = 65535
+      source_port_min = 1
+      source_port_max = 65535
+      type            = null
+      code            = null
     }
   ]
   acl_inbound_rules_udp_443 = [
     for i, subnet_cidr in local.subnet_cidrs :
     {
-      name        = "inbound-udp-443-${i}"
-      action      = "allow"
-      source      = var.remote_cidr
-      destination = subnet_cidr
-      direction   = "inbound"
-      udp = {
-        port_min = 443
-        port_max = 443
-      }
-      tcp = null
+      name            = "inbound-udp-443-${i}"
+      action          = "allow"
+      source          = var.remote_cidr
+      destination     = subnet_cidr
+      direction       = "inbound"
+      protocol        = "udp"
+      port_min        = 443
+      port_max        = 443
+      source_port_min = null
+      source_port_max = null
+      type            = null
+      code            = null
     }
   ]
   acl_inbound_rules_udp_53 = [
     for i, client_dns_server_ip in var.client_dns_server_ips :
     {
-      name        = "inbound-udp-53-${i}"
-      action      = "allow"
-      source      = var.remote_cidr
-      destination = client_dns_server_ip
-      direction   = "inbound"
-      udp = {
-        source_port_min = 53
-        source_port_max = 53
-      }
-      tcp = null
+      name            = "inbound-udp-53-${i}"
+      action          = "allow"
+      source          = var.remote_cidr
+      destination     = client_dns_server_ip
+      direction       = "inbound"
+      protocol        = "udp"
+      port_min        = null
+      port_max        = null
+      source_port_min = 53
+      source_port_max = 53
+      type            = null
+      code            = null
     }
   ]
   deny_all_rules = [
     {
-      name        = "ibmflow-deny-all-inbound"
-      action      = "deny"
-      source      = "0.0.0.0/0"
-      destination = "0.0.0.0/0"
-      direction   = "inbound"
-      tcp         = null
-      udp         = null
-      icmp        = null
+      name            = "ibmflow-deny-all-inbound"
+      action          = "deny"
+      source          = "0.0.0.0/0"
+      destination     = "0.0.0.0/0"
+      direction       = "inbound"
+      protocol        = null
+      port_min        = null
+      port_max        = null
+      source_port_min = null
+      source_port_max = null
+      type            = null
+      code            = null
     },
     {
-      name        = "ibmflow-deny-all-outbound"
-      action      = "deny"
-      source      = "0.0.0.0/0"
-      destination = "0.0.0.0/0"
-      direction   = "outbound"
-      tcp         = null
-      udp         = null
-      icmp        = null
+      name            = "ibmflow-deny-all-outbound"
+      action          = "deny"
+      source          = "0.0.0.0/0"
+      destination     = "0.0.0.0/0"
+      direction       = "outbound"
+      protocol        = null
+      port_min        = null
+      port_max        = null
+      source_port_min = null
+      source_port_max = null
+      type            = null
+      code            = null
     }
   ]
   acl_object = length(var.existing_subnet_ids) <= 0 ? {
@@ -269,24 +285,13 @@ resource "ibm_is_network_acl" "client_to_site_vpn_acl" {
       destination = rules.value.destination
       direction   = rules.value.direction
 
-      dynamic "udp" {
-        for_each = (rules.value.udp == null ? [] : length([for value in ["port_min", "port_max", "source_port_min", "source_port_max"] : true if lookup(rules.value["udp"], value, null) == null]) == 4 ? [] : [rules.value])
-        content {
-          port_min        = lookup(rules.value.udp, "port_min", null)
-          port_max        = lookup(rules.value.udp, "port_max", null)
-          source_port_min = lookup(rules.value.udp, "source_port_min", null)
-          source_port_max = lookup(rules.value.udp, "source_port_max", null)
-        }
-      }
-      dynamic "tcp" {
-        for_each = (rules.value.tcp == null ? [] : length([for value in ["port_min", "port_max", "source_port_min", "source_port_max"] : true if lookup(rules.value["tcp"], value, null) == null]) == 4 ? [] : [rules.value])
-        content {
-          port_min        = lookup(rules.value.tcp, "port_min", null)
-          port_max        = lookup(rules.value.tcp, "port_max", null)
-          source_port_min = lookup(rules.value.tcp, "source_port_min", null)
-          source_port_max = lookup(rules.value.tcp, "source_port_max", null)
-        }
-      }
+      protocol        = rules.value.protocol
+      port_min        = rules.value.port_min
+      port_max        = rules.value.port_max
+      source_port_min = rules.value.source_port_min
+      source_port_max = rules.value.source_port_max
+      type            = rules.value.type
+      code            = rules.value.code
     }
   }
 }
