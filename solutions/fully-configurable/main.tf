@@ -3,7 +3,7 @@
 #######################################################################################################################
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.6.0"
+  version                      = "1.6.1"
   existing_resource_group_name = var.existing_resource_group_name
 }
 
@@ -16,14 +16,14 @@ locals {
 }
 module "existing_sm_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.5.0"
+  version = "1.9.0"
   crn     = var.existing_secrets_manager_instance_crn
 }
 
 module "existing_secrets_manager_cert_crn_parser" {
   count   = var.existing_secrets_manager_cert_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.5.0"
+  version = "1.9.0"
   crn     = var.existing_secrets_manager_cert_crn
 }
 
@@ -45,7 +45,7 @@ module "secrets_manager_secret_group" {
 module "secrets_manager_private_certificate" {
   count                  = var.existing_secrets_manager_cert_crn == null ? 1 : 0
   source                 = "terraform-ibm-modules/secrets-manager-private-cert/ibm"
-  version                = "1.12.2"
+  version                = "1.12.5"
   cert_name              = (var.prefix != null && var.prefix != "") ? "${var.prefix}-cts-vpn-private-cert" : "cts-vpn-private-cert"
   cert_description       = "private certificate for client to site VPN connection"
   cert_template          = var.private_cert_engine_config_template_name
@@ -249,7 +249,7 @@ locals {
 
 module "existing_vpc_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.5.0"
+  version = "1.9.0"
   crn     = var.existing_vpc_crn
 }
 
@@ -379,7 +379,7 @@ resource "ibm_is_network_acl_rule" "inbound_acl_rules_subnet1" {
 module "client_to_site_sg" {
   count                        = var.add_security_group ? 1 : 0
   source                       = "terraform-ibm-modules/security-group/ibm"
-  version                      = "2.10.0"
+  version                      = "2.11.0"
   add_ibm_cloud_internal_rules = true
   vpc_id                       = local.existing_vpc_id
   resource_group               = module.resource_group.resource_group_id
