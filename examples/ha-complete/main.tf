@@ -51,17 +51,21 @@ module "secrets_manager_group" {
 
 # Configure private cert engine if provisioning a new SM instance
 module "private_secret_engine" {
-  depends_on                = [module.secrets_manager]
-  count                     = var.existing_sm_instance_guid == null ? 1 : 0
-  source                    = "terraform-ibm-modules/secrets-manager-private-cert-engine/ibm"
-  version                   = "2.0.4"
-  secrets_manager_guid      = local.sm_guid
-  region                    = local.sm_region
-  root_ca_name              = var.root_ca_name
-  intermediate_ca_name      = var.intermediate_ca_name
-  certificate_template_name = var.certificate_template_name
-  root_ca_max_ttl           = var.root_ca_max_ttl
-  root_ca_common_name       = var.root_ca_common_name
+  depends_on           = [module.secrets_manager]
+  count                = var.existing_sm_instance_guid == null ? 1 : 0
+  source               = "terraform-ibm-modules/secrets-manager-private-cert-engine/ibm"
+  version              = "2.0.4"
+  secrets_manager_guid = local.sm_guid
+  region               = local.sm_region
+  root_ca_name         = var.root_ca_name
+  intermediate_ca_name = var.intermediate_ca_name
+  certificate_templates = [
+    {
+      name = var.certificate_template_name
+    }
+  ]
+  root_ca_max_ttl     = var.root_ca_max_ttl
+  root_ca_common_name = var.root_ca_common_name
   providers = {
     ibm = ibm.ibm-sm
   }
@@ -96,7 +100,7 @@ module "basic_vpc" {
   region               = var.region
   name                 = "vpc"
   prefix               = var.prefix
-  tags                 = var.resource_tags
+  resource_tags        = var.resource_tags
   enable_vpc_flow_logs = false
   use_public_gateways = {
     zone-1 = false

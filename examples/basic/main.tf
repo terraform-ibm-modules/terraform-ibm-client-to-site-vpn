@@ -55,7 +55,7 @@ module "basic_vpc" {
   region               = var.region
   name                 = "vpc"
   prefix               = var.prefix
-  tags                 = var.resource_tags
+  resource_tags        = var.resource_tags
   enable_vpc_flow_logs = false
   use_public_gateways = {
     zone-1 = false
