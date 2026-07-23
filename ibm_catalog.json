@@ -132,13 +132,13 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_output": "secrets_manager_crn",
-                  "version_input": "existing_secrets_manager_instance_crn"
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
                 },
                 {
-                  "dependency_input": "prefix",
-                  "version_input": "prefix",
-                  "reference_version": true
+                  "dependency_output": "secrets_manager_crn",
+                  "version_input": "existing_secrets_manager_instance_crn"
                 },
                 {
                   "dependency_input": "secrets_manager_region",
