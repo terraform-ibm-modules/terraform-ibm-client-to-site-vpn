@@ -114,8 +114,8 @@ locals {
     {
       name            = "outbound-udp-53-${i}"
       action          = "allow"
-      source          = client_dns_server_ip
-      destination     = var.remote_cidr
+      source          = var.remote_cidr
+      destination     = "${client_dns_server_ip}/32"
       direction       = "outbound"
       protocol        = "udp"
       port_min        = 53
@@ -165,8 +165,8 @@ locals {
     {
       name            = "inbound-udp-53-${i}"
       action          = "allow"
-      source          = var.remote_cidr
-      destination     = client_dns_server_ip
+      source          = "${client_dns_server_ip}/32"
+      destination     = var.remote_cidr
       direction       = "inbound"
       protocol        = "udp"
       port_min        = null
