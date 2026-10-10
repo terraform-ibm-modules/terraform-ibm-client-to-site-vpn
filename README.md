@@ -97,7 +97,7 @@ You need the following permissions to run this module.
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.61.0, < 3.0.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1, < 1.0.0 |
@@ -105,13 +105,13 @@ You need the following permissions to run this module.
 ### Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_sm_crn_parser"></a> [sm\_crn\_parser](#module\_sm\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.9.0 |
 
 ### Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [ibm_iam_access_group.cts_vpn_access_group](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/iam_access_group) | resource |
 | [ibm_iam_access_group_members.cts_vpn_access_group_users](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/iam_access_group_members) | resource |
 | [ibm_iam_access_group_policy.cts_vpn_access_group_policy](https://registry.terraform.io/providers/ibm-cloud/ibm/latest/docs/resources/iam_access_group_policy) | resource |
@@ -123,7 +123,7 @@ You need the following permissions to run this module.
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_group_name"></a> [access\_group\_name](#input\_access\_group\_name) | Name of the IAM Access Group to create if var.create\_policy is true | `string` | `"client-to-site-vpn-access-group"` | no |
 | <a name="input_client_cert_crns"></a> [client\_cert\_crns](#input\_client\_cert\_crns) | List of client CRN certificates used for VPN authentication. Must not be empty if enable\_certificate\_auth is true. | `list(string)` | `[]` | no |
 | <a name="input_client_dns_server_ips"></a> [client\_dns\_server\_ips](#input\_client\_dns\_server\_ips) | DNS server addresses that will be provided to VPN clients connected to this VPN server | `list(string)` | `[]` | no |
@@ -146,7 +146,7 @@ You need the following permissions to run this module.
 ### Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_vpn_server_certificate_secret_crn"></a> [vpn\_server\_certificate\_secret\_crn](#output\_vpn\_server\_certificate\_secret\_crn) | CRN of the client to site vpn server certificate secret stored in Secrets Manager |
 | <a name="output_vpn_server_id"></a> [vpn\_server\_id](#output\_vpn\_server\_id) | Client to Site VPN ID |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
