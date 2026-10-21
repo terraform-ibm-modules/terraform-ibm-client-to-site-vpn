@@ -11,6 +11,7 @@ module "landing_zone" {
   enable_transit_gateway     = false
   add_atracker_route         = false
   existing_cos_endpoint_type = "public"
+  kms_endpoint_type          = "public"
 }
 
 ################################################################################
