@@ -4,7 +4,7 @@
 
 module "landing_zone" {
   source                     = "terraform-ibm-modules/landing-zone/ibm//patterns//vpc//module"
-  version                    = "8.23.5"
+  version                    = "8.23.6"
   region                     = var.region
   prefix                     = var.prefix
   tags                       = var.resource_tags
@@ -43,7 +43,7 @@ module "existing_sm_crn_parser" {
 module "secrets_manager_group" {
   count                    = var.existing_secrets_manager_instance_crn != null ? 1 : 0
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.5.9"
+  version                  = "1.5.11"
   region                   = local.sm_region
   secrets_manager_guid     = local.secrets_manager_guid
   secret_group_name        = "${var.prefix}-cert-secret-group"
