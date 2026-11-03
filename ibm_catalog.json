@@ -171,13 +171,8 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "certificate_template_name",
-                  "version_input": "certificate_template_name",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "template_max_ttl",
-                  "version_input": "template_max_ttl",
+                  "dependency_input": "cert_template",
+                  "version_input": "cert_template",
                   "reference_version": true
                 },
                 {
@@ -348,20 +343,11 @@
               "description": "The common name of the Intermediate Certificate Authority you want to create."
             },
             {
-              "key": "certificate_template_name",
+              "key": "cert_template",
               "type": "string",
               "required": false,
               "virtual": true,
-              "default_value": "template",
-              "description": "The name of the Certificate Template you want to create."
-            },
-            {
-              "key": "template_max_ttl",
-              "type": "string",
-              "required": false,
-              "virtual": true,
-              "default_value": "8760h",
-              "description": "Max TTL for the certificate template you want to create."
+              "description": "The name of the certificate template used to create the VPN server certificate. The private certificate engine creates a template named `<prefix>-template`, so set this to that value. Only used when `existing_secrets_manager_cert_crn` is not set."
             },
             {
               "key": "private_cert_engine_config_root_ca_common_name"
