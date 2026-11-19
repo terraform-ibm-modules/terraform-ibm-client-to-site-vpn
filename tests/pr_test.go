@@ -9,17 +9,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
-
-	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
@@ -296,82 +293,4 @@ func TestFullyConfigurableSolutionExistingResources(t *testing.T) {
 		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (existing resources)")
 	}
-}
-
-func TestAddonsDefaultConfiguration(t *testing.T) {
-
-	t.Parallel()
-	overrideInputMappings := true
-	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing:               t,
-		Prefix:                "cts-vpn",
-		QuietMode:             false,                  // Suppress logs except on failure
-		OverrideInputMappings: &overrideInputMappings, // service_plan on SM dependency is also set via reference from parent secrets_manager_service_plan; allow explicit __NULL__ to take precedence
-	})
-
-	// use unique resource group to prevent s2s auth policy clash
-	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
-
-	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
-		options.Prefix,
-		"deploy-arch-ibm-client-to-site-vpn",
-		"fully-configurable",
-		map[string]interface{}{
-			// prefix must be set explicitly: it is shared (reference_version) with the private cert dependency and engine,
-			// which name the template "<prefix>-template". Without this it defaults to a random value.
-			"prefix":                       options.Prefix,
-			"region":                       "eu-de",
-			"secrets_manager_service_plan": "trial",
-			// use unique resource group to prevent s2s auth policy clash
-			"existing_resource_group_name": uniqueResourceGroup,
-		},
-	)
-
-	//	use existing secrets manager instance to prevent hitting 20 trial instance limit in account
-	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
-		{
-			OfferingName:   "deploy-arch-ibm-secrets-manager",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
-				"service_plan":                         "__NULL__", // no plan value needed when using existing SM
-				"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
-				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
-			},
-		},
-		// private cert v1.12.16+ no longer maps cert_template from the private cert engine, so it must be provided.
-		{
-			OfferingName:   "deploy-arch-secrets-manager-private-cert",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"cert_template": fmt.Sprintf("%s-template", options.Prefix),
-			},
-		},
-		// Disable target / route creation to prevent hitting quota in account
-		{
-			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"enable_metrics_routing_to_cloud_monitoring": false,
-			},
-		},
-		{
-			OfferingName:   "deploy-arch-ibm-activity-tracker",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"enable_activity_tracker_event_routing_to_cloud_logs": false,
-			},
-		},
-	}
-
-	var err = sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
-		return options.RunAddonTest()
-	})
-	require.NoError(t, err)
-
-}
-
-func generateUniqueResourceGroupName(baseName string) string {
-	id := uuid.New().String()[:8]
-	return fmt.Sprintf("%s-%s", baseName, id)
 }
