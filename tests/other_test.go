@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
@@ -107,6 +108,20 @@ func TestAddonsDefaultConfiguration(t *testing.T) {
 			Inputs: map[string]interface{}{
 				"enable_activity_tracker_event_routing_to_cloud_logs": false,
 			},
+		},
+		// Use the permanent App Configuration instance to prevent creating a new one on each run
+		{
+			OfferingName:   "deploy-arch-ibm-scc-workload-protection",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"app_config_crn": permanentResources["app_config_crn"],
+			},
+			Enabled: core.BoolPtr(true),
+		},
+		{
+			OfferingName:   "deploy-arch-ibm-apprapp",
+			OfferingFlavor: "fully-configurable",
+			Enabled:        core.BoolPtr(false),
 		},
 	}
 
